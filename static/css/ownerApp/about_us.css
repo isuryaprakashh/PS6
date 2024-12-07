@@ -240,3 +240,45 @@ footer {
     animation: fadeIn 0.6s ease-out forwards;
     animation-delay: calc(var(--i) * 0.2s);
 }
+/* Social Links styles */
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.social-icon {
+    color: #666;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.social-icon:hover {
+    transform: translateY(-3px);
+}
+
+.social-icon:hover i.fa-github {
+    color: #333;
+}
+
+.social-icon:hover i.fa-linkedin-in {
+    color: #0077b5;
+}
+
+.social-icon:hover i.fa-x-twitter {
+    color: #000; /* X's brand color is black */
+}
+
+/* Make X icon slightly smaller as it's a different style */
+.fa-x-twitter {
+    font-size: 0.9em;
+}
