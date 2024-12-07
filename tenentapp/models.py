@@ -39,3 +39,4 @@ class TenentProfile(models.Model):
     class Meta:
         verbose_name = "Tenant Profile"
         verbose_name_plural = "Tenant Profiles"
+

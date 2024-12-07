@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contract Form</title>
     <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
     <link rel="stylesheet" href="{% static 'css/ownerApp/rental_contract.css' %}">
@@ -11,102 +12,116 @@
     {% include 'Navbar/ownerNavBar.html' %}
 
     <div class="contract-wrapper">
-        <h1 class="contract-title">Create {{ form.agreement_type.label }} Document</h1>
+        <div class="contract-container">
+            <h1 class="contract-title">Create {{ form.agreement_type.label }} Document</h1>
 
-        <form method="post" class="contract-form">
-            {% csrf_token %}
+            <form method="post" class="contract-form">
+                {% csrf_token %}
 
-            <div>
-                {{ form.agreement_type.label_tag }} {{ form.agreement_type }}
-            </div>
-
-            <div id="rental-fields" style="display: none;">
-                <h3>Rental Agreement Details</h3>
-                <div class="field-group">
-                    <div>
-                        {{ form.rental_amount.label_tag }} {{ form.rental_amount }}
-                    </div>
-                    <div>
-                        {{ form.security_deposit.label_tag }} {{ form.security_deposit }}
-                    </div>
+                <div class="form-section">
+                    {{ form.agreement_type.label_tag }}
+                    {{ form.agreement_type }}
                 </div>
-                <div class="field-group">
-                    <div>
-                        {{ form.start_date.label_tag }} {{ form.start_date }}
-                    </div>
-                    <div>
-                        {{ form.end_date.label_tag }} {{ form.end_date }}
-                    </div>
-                </div>
-            </div>
 
-            <div id="sale-fields" style="display: none;">
-                <h3>Sale Agreement Details</h3>
-                <div class="field-group">
-                    <div>
-                        {{ form.sale_price.label_tag }} {{ form.sale_price }}
+                <div id="rental-fields" class="form-section" style="display: none;">
+                    <h3>Rental Agreement Details</h3>
+                    <div class="field-group">
+                        <div class="form-field">
+                            {{ form.rental_amount.label_tag }}
+                            {{ form.rental_amount }}
+                        </div>
+                        <div class="form-field">
+                            {{ form.security_deposit.label_tag }}
+                            {{ form.security_deposit }}
+                        </div>
                     </div>
-                    <div>
-                        {{ form.sale_date.label_tag }} {{ form.sale_date }}
+                    <div class="field-group">
+                        <div class="form-field">
+                            {{ form.start_date.label_tag }}
+                            {{ form.start_date }}
+                        </div>
+                        <div class="form-field">
+                            {{ form.end_date.label_tag }}
+                            {{ form.end_date }}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <h3>Personal Details</h3>
-            <div class="field-group">
-                <div>
-                    {{ form.tenant_name.label_tag }} {{ form.tenant_name }}
+                <div id="sale-fields" class="form-section" style="display: none;">
+                    <h3>Sale Agreement Details</h3>
+                    <div class="field-group">
+                        <div class="form-field">
+                            {{ form.sale_price.label_tag }}
+                            {{ form.sale_price }}
+                        </div>
+                        <div class="form-field">
+                            {{ form.sale_date.label_tag }}
+                            {{ form.sale_date }}
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    {{ form.tenant_email.label_tag }} {{ form.tenant_email }}
+
+                <div class="form-section">
+                    <h3>Personal Details</h3>
+                    <div class="field-group">
+                        <div class="form-field">
+                            {{ form.tenant_name.label_tag }}
+                            {{ form.tenant_name }}
+                        </div>
+                        <div class="form-field">
+                            {{ form.tenant_email.label_tag }}
+                            {{ form.tenant_email }}
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        {{ form.tenant_address.label_tag }}
+                        {{ form.tenant_address }}
+                    </div>
+
+                    <div class="field-group">
+                        <div class="form-field">
+                            {{ form.owner_name.label_tag }}
+                            {{ form.owner_name }}
+                        </div>
+                        <div class="form-field">
+                            {{ form.owner_email.label_tag }}
+                            {{ form.owner_email }}
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        {{ form.owner_address.label_tag }}
+                        {{ form.owner_address }}
+                    </div>
+
+                    <div class="form-field">
+                        {{ form.property_address.label_tag }}
+                        {{ form.property_address }}
+                    </div>
                 </div>
-            </div>
 
-            <div>
-                {{ form.tenant_address.label_tag }} {{ form.tenant_address }}
-            </div>
-
-            <div class="field-group">
-                <div>
-                    {{ form.owner_name.label_tag }} {{ form.owner_name }}
-                </div>
-                <div>
-                    {{ form.owner_email.label_tag }} {{ form.owner_email }}
-                </div>
-            </div>
-
-            <div>
-                {{ form.owner_address.label_tag }} {{ form.owner_address }}
-            </div>
-
-            <div>
-                {{ form.property_address.label_tag }} {{ form.property_address }}
-            </div>
-
-            <button type="submit">Generate PDF</button>
-        </form>
+                <button type="submit">Generate PDF</button>
+            </form>
+        </div>
     </div>
+{% endblock %}
 
-    <script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const agreementTypeSelect = document.getElementById('id_agreement_type');
+        const rentalFields = document.getElementById('rental-fields');
+        const saleFields = document.getElementById('sale-fields');
+
         function toggleFields() {
-            const agreementType = document.getElementById('id_agreement_type').value;
-            const rentalFields = document.getElementById('rental-fields');
-            const saleFields = document.getElementById('sale-fields');
-
-            if (agreementType === 'rental') {
-                rentalFields.style.display = 'block';
-                saleFields.style.display = 'none';
-            } else if (agreementType === 'sale') {
-                rentalFields.style.display = 'none';
-                saleFields.style.display = 'block';
-            }
+            const selectedValue = agreementTypeSelect.value;
+            rentalFields.style.display = selectedValue === 'rental' ? 'block' : 'none';
+            saleFields.style.display = selectedValue === 'sale' ? 'block' : 'none';
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            toggleFields();
-            document.getElementById('id_agreement_type').addEventListener('change', toggleFields);
-        });
-    </script>
-{% endblock %}
+        agreementTypeSelect.addEventListener('change', toggleFields);
+        toggleFields(); // Initial state
+    });
+</script>
 </body>
 </html>
