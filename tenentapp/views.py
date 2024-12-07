@@ -244,3 +244,4 @@ def chatbot_view(request):
         response = chat.send_message(user_message)
         return JsonResponse({'response': response.text})
     return render(request, 'tenentapp/chatbot.html')
+

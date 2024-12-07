@@ -16,4 +16,6 @@ urlpatterns = [
 
     path('chatbot_view',views.chatbot_view,name='chatbot_view'),
 
+
+
 ]
