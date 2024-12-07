@@ -1,5 +1,8 @@
 from django.shortcuts import render
 
+from ownerapp.forms import PropertyForm
+
+
 # Create your views here.
 
 def hompage(request):
@@ -229,3 +232,22 @@ def admin_messages(request):
     }
 
     return render(request, 'adminapp/messages.html', context)
+
+
+# views.py
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+
+@login_required
+def upload_property(request):
+    if request.method == "POST":
+        form = PropertyForm(request.POST, request.FILES)
+        if form.is_valid():
+            property = form.save(commit=False)
+            property.owner = request.user  # Set owner to the logged-in user
+            property.save()
+            return redirect('ownerapp:property_list')
+    else:
+        form = PropertyForm()
+    return render(request, 'adminApp/upload_property.html', {'form': form})
+

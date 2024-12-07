@@ -1,0 +1,465 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Property</title>
+    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ownerApp/upload_property.css' %}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+
+<body>
+    {% block body %}
+    {% include 'Navbar/adminNavBar.html' %}
+
+    <div class="page-container">
+        <!-- Left Side - Progress Sidebar -->
+        <div class="progress-sidebar">
+            <div class="progress-header">
+                <h3><i class="fas fa-home"></i> Property Upload</h3>
+                <p>Complete all sections below</p>
+            </div>
+            <div class="progress-steps">
+                <div class="step active">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Basic Information</span>
+                </div>
+                <div class="step">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Location Details</span>
+                </div>
+                <div class="step">
+                    <i class="fas fa-images"></i>
+                    <span>Property Images</span>
+                </div>
+                <div class="step">
+                    <i class="fas fa-list"></i>
+                    <span>Additional Details</span>
+                </div>
+            </div>
+            <div class="upload-tips">
+                <h4><i class="fas fa-lightbulb"></i> Upload Tips</h4>
+                <ul>
+                    <li>Use high-quality images</li>
+                    <li>Provide accurate location details</li>
+                    <li>Be specific in property description</li>
+                    <li>Include all amenities</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Side - Form Container -->
+        <div class="form-container">
+            <div class="form-header">
+                <h2>List Your Property</h2>
+                <p>Fill in the details below to list your property</p>
+            </div>
+
+            <form class="upload-property-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Basic Information Section -->
+                <div class="form-sections">
+                    <div class="form-section active" id="basic-info">
+                        <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                {{ form.title.label_tag }}
+                                {{ form.title }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.property_type.label_tag }}
+                                {{ form.property_type }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.price.label_tag }}
+                                {{ form.price }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.overview.label_tag }}
+                                {{ form.overview }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.description.label_tag }}
+                                {{ form.description }}
+                                <div class="error-message"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Section -->
+                    <div class="form-section" id="location">
+                        <h3><i class="fas fa-map-marker-alt"></i> Location Details</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                {{ form.location.label_tag }}
+                                {{ form.location }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.address.label_tag }}
+                                {{ form.address }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.state.label_tag }}
+                                {{ form.state }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.pincode.label_tag }}
+                                {{ form.pincode }}
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group map-group">
+                                <label>Select Location on Map</label>
+                                <div class="location-url-container">
+                                    <button type="button" class="current-location-btn" onclick="useCurrentLocation()">
+                                        <i class="fas fa-map-marker-alt"></i> Use Current Location
+                                    </button>
+                                </div>
+                                <div class="map-container">
+                                    <div id="map" class="leaflet-map"></div>
+                                </div>
+                                <div class="location-preview">
+                                    <label>Location URL Preview:</label>
+                                    <a href="#" id="location-preview-link" target="_blank">View on OpenStreetMap</a>
+                                </div>
+                                {{ form.location_url }}
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- Images Section -->
+                    <div class="form-section" id="images">
+                        <h3><i class="fas fa-images"></i> Property Images</h3>
+                        <div class="image-upload-container">
+                            <div class="form-group">
+                                {{ form.image.label_tag }}
+                                <div class="image-upload-box" id="main-image-upload">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drag & Drop or Click to Upload Main Image</p>
+                                </div>
+                                {{ form.image }}
+                                <div class="image-preview" id="main-image-preview"></div>
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.image_2.label_tag }}
+                                <div class="image-upload-box" id="image-2-upload">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drag & Drop or Click to Upload Additional Image 1 (Optional)</p>
+                                </div>
+                                {{ form.image_2 }}
+                                <div class="image-preview" id="image-2-preview"></div>
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.image_3.label_tag }}
+                                <div class="image-upload-box" id="image-3-upload">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drag & Drop or Click to Upload Additional Image 2 (Optional)</p>
+                                </div>
+                                {{ form.image_3 }}
+                                <div class="image-preview" id="image-3-preview"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Details Section -->
+                    <div class="form-section" id="additional">
+                        <h3><i class="fas fa-list"></i> Additional Details</h3>
+                        <div class="form-grid">
+                            <div class="features-grid">
+                                <div class="form-group">
+                                    {{ form.bedrooms.label_tag }}
+                                    {{ form.bedrooms }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form.bathrooms.label_tag }}
+                                    {{ form.bathrooms }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form.size.label_tag }}
+                                    {{ form.size }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form.parking.label_tag }}
+                                    {{ form.parking }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form.year_built.label_tag }}
+                                    {{ form.year_built }}
+                                </div>
+
+                                <div class="form-group">
+                                    {{ form.flooring_type.label_tag }}
+                                    {{ form.flooring_type }}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.owner_name.label_tag }}
+                                {{ form.owner_name }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.email.label_tag }}
+                                {{ form.email }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.phone.label_tag }}
+                                {{ form.phone }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.occupancy_status.label_tag }}
+                                {{ form.occupancy_status }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="prev-btn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+                    <button type="button" class="next-btn">Next <i class="fas fa-arrow-right"></i></button>
+                    <button type="submit" class="submit-btn" style="display: none;">Upload Property <i class="fas fa-check"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Map initialization
+    let map;
+    let marker;
+
+    // Form navigation elements
+    const sections = document.querySelectorAll('.form-section');
+    const steps = document.querySelectorAll('.step');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    const submitBtn = document.querySelector('.submit-btn');
+    let currentSection = 0;
+
+    // Initialize map
+    function initMap() {
+        map = L.map('map').setView([20.5937, 78.9629], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        marker = L.marker([20.5937, 78.9629], {
+            draggable: true
+        }).addTo(map);
+
+        marker.on('dragend', function(event) {
+            const position = marker.getLatLng();
+            updateLocationDetails(position.lat, position.lng);
+        });
+
+        map.on('click', function(e) {
+            updateMapLocation(e.latlng.lat, e.latlng.lng);
+        });
+    }
+
+    // Form navigation functions
+    function updateSections() {
+        sections.forEach((section, index) => {
+            section.classList.remove('active');
+            steps[index].classList.remove('active');
+        });
+
+        sections[currentSection].classList.add('active');
+        steps[currentSection].classList.add('active');
+
+        // Update buttons
+        prevBtn.disabled = currentSection === 0;
+        if (currentSection === sections.length - 1) {
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'flex';
+        } else {
+            nextBtn.style.display = 'flex';
+            submitBtn.style.display = 'none';
+        }
+
+        // If we're on the location section, refresh the map
+        if (sections[currentSection].id === 'location' && map) {
+            map.invalidateSize();
+        }
+    }
+
+    function validateSection(index) {
+        const section = sections[index];
+        const inputs = section.querySelectorAll('input, select, textarea');
+        let isValid = true;
+
+        inputs.forEach(input => {
+            if (input.required && !input.value) {
+                input.classList.add('error');
+                isValid = false;
+                const errorDiv = input.parentElement.querySelector('.error-message');
+                if (errorDiv) {
+                    errorDiv.textContent = 'This field is required';
+                }
+            }
+        });
+
+        return isValid;
+    }
+
+    // Event listeners for navigation
+    nextBtn.addEventListener('click', () => {
+        if (validateSection(currentSection)) {
+            currentSection++;
+            updateSections();
+            window.scrollTo(0, 0);
+        } else {
+            alert('Please fill in all required fields before proceeding.');
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        currentSection--;
+        updateSections();
+        window.scrollTo(0, 0);
+    });
+
+    // Click on steps to navigate
+    steps.forEach((step, index) => {
+        step.addEventListener('click', () => {
+            if (index < currentSection || validateSection(currentSection)) {
+                currentSection = index;
+                updateSections();
+                window.scrollTo(0, 0);
+            }
+        });
+    });
+
+    // Map related functions
+    function useCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    updateMapLocation(lat, lng);
+                },
+                (error) => {
+                    alert('Unable to fetch location. Please try again.');
+                }
+            );
+        } else {
+            alert('Geolocation is not supported by your browser.');
+        }
+    }
+
+    function updateMapLocation(lat, lng) {
+        marker.setLatLng([lat, lng]);
+        map.setView([lat, lng], 16);
+        updateLocationDetails(lat, lng);
+    }
+
+    function updateLocationDetails(lat, lng) {
+        const osmUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`;
+        document.getElementById('id_location_url').value = osmUrl;
+        document.getElementById('location-preview-link').href = osmUrl;
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.display_name) {
+                    document.getElementById('id_address').value = data.display_name;
+                    document.getElementById('id_location').value =
+                        data.address.city ||
+                        data.address.town ||
+                        data.address.village ||
+                        data.address.suburb ||
+                        '';
+                }
+            })
+            .catch(error => console.error('Error fetching address:', error));
+    }
+
+    // Handle image uploads
+    function handleImageUpload(inputId, previewId, uploadBoxId) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        const uploadBox = document.getElementById(uploadBoxId);
+
+        uploadBox.addEventListener('click', () => input.click());
+
+        input.addEventListener('change', function(e) {
+            handleFiles(this.files);
+        });
+
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.classList.remove('dragover');
+        });
+
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.style.backgroundImage = `url(${e.target.result})`;
+                        preview.style.display = 'block';
+                        uploadBox.style.display = 'none';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Please upload an image file.');
+                }
+            }
+        }
+    }
+
+    // Initialize everything
+    initMap();
+    handleImageUpload('id_image', 'main-image-preview', 'main-image-upload');
+    handleImageUpload('id_image_2', 'image-2-preview', 'image-2-upload');
+    handleImageUpload('id_image_3', 'image-3-preview', 'image-3-upload');
+
+    // Make map-related functions globally available
+    window.useCurrentLocation = useCurrentLocation;
+});
+    </script>
+    {% endblock %}
+</body>
+</html>

@@ -8,8 +8,8 @@
     <nav>
         <ul>
             <li><a href="{% url 'adminapp:homepage' %}">Home</a></li>
-            <li><a href="#properties">Find Properties</a></li>
-            <li><a href="#upload-property">Upload Property</a></li><!-- Changed space to hyphen -->
+            <li><a href="{% url 'ownerapp:property_list' %}">Find Properties</a></li>
+            <li><a href="{% url 'adminapp:upload_property' %}">Upload Property</a></li><!-- Changed space to hyphen -->
             <li><a href="{% url 'adminapp:dashboard' %}">User Profiles</a></li>
             <li><a href="{% url 'adminapp:admin_messages' %}">Messages</a></li>
         </ul>

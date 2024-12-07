@@ -147,10 +147,20 @@ def property_list(request):
     return render(request, 'ownerApp/property_list.html', context)
 
 
+from django.contrib.auth.decorators import login_required
 
+
+@login_required
 def property_detail(request, pk):
     property = Property.objects.get(pk=pk)
-    return render(request, 'ownerApp/property_detail.html', {'property': property})
+
+    if request.user.username == "admin":  # Check if the username is 'admin'
+        template = 'adminApp/property_detail.html'
+    else:
+        template = 'ownerApp/property_detail.html'
+
+    return render(request, template, {'property': property})
+
 
 # views.py
 # views.py
