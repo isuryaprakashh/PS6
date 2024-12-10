@@ -31,7 +31,7 @@ def tenent_profile(request):
             'email': request.user.email
         }
     )
-
+    form =None
     if request.method == 'POST':
         if 'update_profile' in request.POST:
             form = TenentProfileForm(request.POST, request.FILES, instance=profile)
@@ -66,6 +66,8 @@ def tenent_profile(request):
         'page_title': 'Profile Settings'
     }
     return render(request, 'tenentApp/tenentProfile.html', context)
+
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q

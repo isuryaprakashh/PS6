@@ -1,3 +1,4 @@
+from django.http import HttpResponseForbidden
 from django.shortcuts import render
 
 from ownerapp.forms import PropertyForm
@@ -251,3 +252,35 @@ def upload_property(request):
         form = PropertyForm()
     return render(request, 'adminApp/upload_property.html', {'form': form})
 
+
+
+
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
+from ownerapp.models import Property
+from ownerapp.forms import PropertyForm
+
+
+@login_required
+def edit_property(request, pk):
+    property = get_object_or_404(Property, pk=pk)
+    if request.method == 'POST':
+        form = PropertyForm(request.POST, request.FILES, instance=property)
+        if form.is_valid():
+            form.save()
+            return redirect('ownerapp:property_list')
+    else:
+        form = PropertyForm(instance=property)
+    return render(request, 'adminApp/edit_property.html', {'form': form})
+
+
+
+@login_required
+def delete_property(request, pk):
+    property = get_object_or_404(Property, id=pk)
+
+    if request.method == "POST":
+        property.delete()
+        return redirect('ownerapp:property_list')
+
+    return render(request, 'confirm_delete.html', {'property': property})
