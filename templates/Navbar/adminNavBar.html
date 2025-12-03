@@ -1,8 +1,16 @@
 {% load static %}
-<nav
-    class="w-full max-w-5xl mt-6 bg-black/90 backdrop-blur-md border border-white/20 rounded-full px-6 py-3 flex justify-between items-center text-white z-20 mx-auto absolute left-0 right-0 top-0">
-    <div class="text-xl font-bold tracking-wide">PS6<span class="font-light">PROPERTIES</span></div>
 
+<!-- MAIN NAVBAR -->
+<nav
+    class="w-full max-w-5xl mt-6 bg-black/90 backdrop-blur-md border border-white/20 rounded-full px-6 py-3 
+           flex justify-between items-center text-white z-20 mx-auto absolute left-0 right-0 top-0">
+
+    <!-- Logo -->
+    <div class="text-xl font-bold tracking-wide">
+        PS6<span class="font-light">PROPERTIES</span>
+    </div>
+
+    <!-- Desktop Menu -->
     <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-200">
         <a href="{% url 'adminapp:homepage' %}" class="hover:text-white transition">Home</a>
         <a href="{% url 'ownerapp:property_list' %}" class="hover:text-white transition">Find Properties</a>
@@ -11,22 +19,26 @@
         <a href="{% url 'adminapp:admin_messages' %}" class="hover:text-white transition">Messages</a>
     </div>
 
-    <div class="flex items-center gap-4">
+    <!-- Desktop Auth -->
+    <div class="hidden md:flex items-center gap-4">
         {% if user.is_authenticated %}
-        <span class="text-sm font-medium text-white hidden md:block">Welcome {{ user.username|upper }}</span>
-        <form action="{% url 'adminapp:logout_view' %}" method="POST" style="display:inline;">
+        <span class="text-sm font-medium text-white">Welcome {{ user.username|upper }}</span>
+
+        <form action="{% url 'adminapp:logout_view' %}" method="POST">
             {% csrf_token %}
             <button type="submit"
                 class="bg-white text-black text-sm font-semibold px-5 py-2 rounded-full hover:bg-gray-100 transition shadow-lg">
                 Logout
             </button>
         </form>
+
         {% else %}
         <div class="relative group">
             <button
                 class="bg-white text-black text-sm font-semibold px-5 py-2 rounded-full hover:bg-gray-100 transition shadow-lg flex items-center gap-2">
                 Login/Register <i class="fas fa-chevron-down text-xs"></i>
             </button>
+
             <div class="absolute right-0 top-full pt-2 w-48 hidden group-hover:block">
                 <div class="bg-white rounded-xl shadow-xl py-2 border border-gray-100 overflow-hidden">
                     <a href="{% url 'adminapp:login_or_register' %}"
@@ -42,4 +54,70 @@
         </div>
         {% endif %}
     </div>
+
+    <!-- Mobile Hamburger Button -->
+    <button id="mobileMenuBtn" class="md:hidden text-white text-2xl">
+        <i class="fas fa-bars"></i>
+    </button>
 </nav>
+
+<!-- MOBILE MENU (IMPROVED) -->
+<div id="mobileMenu"
+    class="md:hidden hidden fixed top-20 left-0 right-0 mx-auto w-[90%]
+           backdrop-blur-xl bg-black/70 border border-white/10 
+           rounded-2xl shadow-2xl p-6 space-y-5 z-50 animate-slideDown">
+
+    <div class="space-y-4">
+        <a href="{% url 'adminapp:homepage' %}" class="block text-lg font-semibold text-white hover:text-gray-300">Home</a>
+        <a href="{% url 'ownerapp:property_list' %}" class="block text-lg font-semibold text-white hover:text-gray-300">Find Properties</a>
+        <a href="{% url 'adminapp:upload_property' %}" class="block text-lg font-semibold text-white hover:text-gray-300">Upload Property</a>
+        <a href="{% url 'adminapp:dashboard' %}" class="block text-lg font-semibold text-white hover:text-gray-300">User Profiles</a>
+        <a href="{% url 'adminapp:admin_messages' %}" class="block text-lg font-semibold text-white hover:text-gray-300">Messages</a>
+    </div>
+
+    <hr class="border-white/20">
+
+    {% if user.is_authenticated %}
+    <p class="text-sm text-gray-300 font-medium">Welcome {{ user.username|upper }}</p>
+
+    <form action="{% url 'adminapp:logout_view' %}" method="POST">
+        {% csrf_token %}
+        <button
+            class="w-full bg-white text-black py-2.5 rounded-full font-semibold shadow-md hover:bg-gray-100 transition">
+            Logout
+        </button>
+    </form>
+
+    {% else %}
+    <div class="space-y-3">
+        <a href="{% url 'adminapp:login_or_register' %}"
+            class="block w-full bg-white text-black py-2.5 rounded-full text-center font-semibold shadow-md hover:bg-gray-200">
+            Tenant Login
+        </a>
+
+        <a href="{% url 'ownerapp:login_or_register1' %}"
+            class="block w-full bg-gray-200 text-black py-2.5 rounded-full text-center font-semibold shadow-md hover:bg-gray-300">
+            Owner Login
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- MOBILE MENU SCRIPT -->
+<script>
+    document.getElementById("mobileMenuBtn").addEventListener("click", function () {
+        const menu = document.getElementById("mobileMenu");
+        menu.classList.toggle("hidden");
+    });
+</script>
+
+<!-- SLIDE DOWN ANIMATION -->
+<style>
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-slideDown {
+    animation: slideDown 0.25s ease-out;
+}
+</style>
