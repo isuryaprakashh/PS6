@@ -271,7 +271,7 @@ def edit_property(request, pk):
             return redirect('ownerapp:property_list')
     else:
         form = PropertyForm(instance=property)
-    return render(request, 'adminApp/edit_property.html', {'form': form})
+    return render(request, 'adminApp/edit_property.html', {'form': form, 'property': property})
 
 
 
