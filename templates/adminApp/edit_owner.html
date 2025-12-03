@@ -1,172 +1,108 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Owner</title>
-    <link rel="stylesheet" href="{% static 'css/adminApp/edit_owner_card.css' %}">
+    <title>Edit Owner - PS6 Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* General body and container styles */
-body {
-font-family: 'Georgia', serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
-
-.container {
-    max-width: 100%; /* Full width */
-    width: 100%; /* Full width */
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Page Header Styling */
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #343a40; /* Dark Gray */
-}
-
-/* Navbar styles */
-.navbar {
-    background-color: #343a40; /* Dark Gray */
-    padding: 10px;
-    color: white;
-}
-
-.navbar a {
-    color: white;
-    margin: 0 15px;
-    text-decoration: none;
-}
-
-/* Card styling for forms */
-.card {
-    padding: 20px;
-    border: 1px solid #ddd; /* Light Gray */
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Form Button Styling */
-.btn {
-    background-color: #a0522d; /* Warm Brown */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 20px; /* Squircles */
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: background-color 0.3s ease, opacity 0.3s ease, transform 0.2s ease;
-}
-
-.btn.cancel {
-    background-color: #6c757d; /* Gray */
-}
-
-.btn:hover {
-    background-color: #8a3f1c; /* Darker Warm Brown for hover */
-    opacity: 0.9;
-    transform: scale(1.05); /* Slightly enlarge on hover */
-}
-
-/* Input and form group styling */
-.form-group {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #343a40; /* Dark Gray */
-}
-
-input[type="text"], input[type="email"] {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc; /* Light Gray border */
-    border-radius: 4px;
-    font-size: 1rem;
-    margin-top: 5px;
-}
-
-/* Error and Success message styling */
-.error {
-    color: red;
-    margin-bottom: 10px;
-}
-
-.success {
-    color: green;
-    margin-bottom: 10px;
-}
-
-/* Message container styling */
-.message-container {
-    margin-bottom: 20px;
-}
-
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-    h1 {
-        font-size: 22px;
-    }
-
-    .container {
-        padding: 15px;
-        margin: 20px auto;
-    }
-
-    .card {
-        padding: 15px;
-    }
-
-    .form-group {
-        margin-bottom: 12px;
-    }
-}
-
-
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
     </style>
 </head>
-<body>
 
-    <div class="container">
-        <h1>Edit Owner</h1>
+<body class="font-sans bg-gray-50 text-brand-dark antialiased min-h-screen flex flex-col">
 
-        <!-- Display messages (success, error) -->
-        {% if messages %}
-            <div class="message-container">
+    {% include 'Navbar/adminNavBar.html' %}
+
+    <main class="flex-grow container mx-auto px-4 py-24 max-w-xl">
+
+        <div class="glass-card rounded-[2rem] p-8 md:p-12 shadow-xl">
+            <div class="text-center mb-8">
+                <div
+                    class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600 text-2xl">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+                <h1 class="text-3xl font-bold mb-2">Edit Owner</h1>
+                <p class="text-gray-500">Update details for <span class="font-semibold text-black">{{ owner.username
+                        }}</span></p>
+            </div>
+
+            {% if messages %}
+            <div class="mb-6 space-y-2">
                 {% for message in messages %}
-                    <div class="{% if message.tags %}{{ message.tags }}{% endif %}">
-                        {{ message }}
-                    </div>
+                <div
+                    class="p-4 rounded-xl text-sm font-medium {% if message.tags == 'error' %}bg-red-50 text-red-600{% else %}bg-green-50 text-green-600{% endif %}">
+                    {{ message }}
+                </div>
                 {% endfor %}
             </div>
-        {% endif %}
+            {% endif %}
 
-        <div class="card">
-            <form method="POST" action="{% url 'adminapp:edit_owner' owner.id %}">
+            <form method="POST" action="{% url 'adminapp:edit_owner' owner.id %}" class="space-y-6">
                 {% csrf_token %}
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" value="{{ owner.username }}" required>
+
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <div class="relative">
+                        <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="username" name="username" value="{{ owner.username }}"
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-black focus:ring-0 transition"
+                            required>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" value="{{ owner.email }}" required>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="email" name="email" value="{{ owner.email }}"
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-black focus:ring-0 transition"
+                            required>
+                    </div>
                 </div>
-                <button type="submit" class="btn">Save</button>
-                <a href="{% url 'adminapp:dashboard' %}" class="btn cancel">Cancel</a>
+
+                <div class="pt-4 flex gap-4">
+                    <button type="submit"
+                        class="flex-grow bg-black text-white font-bold py-4 rounded-full hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2 group">
+                        Save Changes <i class="fas fa-check group-hover:scale-110 transition-transform"></i>
+                    </button>
+                    <a href="{% url 'adminapp:dashboard' %}"
+                        class="px-8 py-4 rounded-full bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition">
+                        Cancel
+                    </a>
+                </div>
             </form>
         </div>
-    </div>
+
+    </main>
 
 </body>
+
 </html>

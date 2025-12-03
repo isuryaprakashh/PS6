@@ -1,111 +1,180 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Owner Profile</title>
-    <link rel="stylesheet" href="{% static 'css/ownerApp/ownerProfile.css' %}">
-    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Owner Profile - PS6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-btn.active {
+            background-color: black;
+            color: white;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
-<body>
+
+<body class="font-sans bg-gray-50 text-brand-dark antialiased min-h-screen flex flex-col">
+
     {% include 'Navbar/ownerNavBar.html' %}
 
-    <div class="main-container">
-        <div class="profile-header">
-            <h1>Profile Settings</h1>
-            <p>Manage your account settings and preferences</p>
+    <main class="flex-grow container mx-auto px-4 py-24 max-w-6xl">
+
+        <!-- Header -->
+        <div class="mb-10">
+            <h1 class="text-3xl font-bold text-gray-900">Profile Settings</h1>
+            <p class="text-gray-500 mt-1">Manage your account settings and preferences</p>
         </div>
 
-        <div class="content-wrapper">
-            <!-- Left Sidebar -->
-            <div class="sidebar">
-                <div class="profile-summary">
-                    <div class="profile-pic">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Sidebar -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Profile Summary Card -->
+                <div class="glass-card p-8 text-center border border-gray-100">
+                    <div class="relative w-24 h-24 mx-auto mb-4">
                         {% if profile.profile_image %}
-                            <img src="{{ profile.profile_image.url }}" alt="Profile Photo">
+                        <img src="{{ profile.profile_image.url }}" alt="Profile"
+                            class="w-full h-full rounded-full object-cover border-4 border-gray-50 shadow-md">
                         {% else %}
-                            <div class="profile-placeholder">
-                                <i class="fas fa-user"></i>
-                            </div>
+                        <div
+                            class="w-full h-full rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-3xl border-4 border-gray-50">
+                            <i class="fas fa-user"></i>
+                        </div>
                         {% endif %}
                     </div>
-                    <h3>{{ request.user.get_full_name }}</h3>
-                    <span class="role">Property Owner</span>
+                    <h2 class="text-xl font-bold text-gray-900">{{
+                        request.user.get_full_name|default:request.user.username }}</h2>
+                    <p class="text-sm text-gray-500 font-medium bg-gray-100 inline-block px-3 py-1 rounded-full mt-2">
+                        Property Owner</p>
                 </div>
 
-                <div class="nav-menu">
-                    <button class="nav-btn active" data-tab="profile">
-                        <i class="fas fa-user"></i>
-                        <span>Profile Details</span>
-                    </button>
-                    <button class="nav-btn" data-tab="security">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Security</span>
-                    </button>
+                <!-- Navigation -->
+                <div class="glass-card p-4 border border-gray-100 overflow-hidden">
+                    <nav class="space-y-2">
+                        <button
+                            class="nav-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-gray-100"
+                            data-tab="profile">
+                            <i class="fas fa-user w-5"></i>
+                            Profile Details
+                        </button>
+                        <button
+                            class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-gray-100"
+                            data-tab="security">
+                            <i class="fas fa-shield-alt w-5"></i>
+                            Security
+                        </button>
+                    </nav>
                 </div>
             </div>
 
-            <!-- Main Content Area -->
-            <div class="main-content">
+            <!-- Main Content -->
+            <div class="lg:col-span-8">
+
                 <!-- Profile Section -->
                 <div id="profile-section" class="content-section active">
-                    <div class="card">
-                        <form id="profileForm" class="form" method="POST" enctype="multipart/form-data">
+                    <div class="glass-card p-8 border border-gray-100">
+                        <form id="profileForm" method="POST" enctype="multipart/form-data" class="space-y-6">
                             {% csrf_token %}
 
-                            <div class="photo-upload">
-                                <div class="current-photo">
+                            <!-- Photo Upload -->
+                            <div class="flex items-center gap-6 pb-6 border-b border-gray-100">
+                                <div class="w-20 h-20 rounded-full bg-gray-100 flex-shrink-0 overflow-hidden">
                                     {% if profile.profile_image %}
-                                        <img src="{{ profile.profile_image.url }}" alt="Profile" id="photoPreview">
+                                    <img src="{{ profile.profile_image.url }}" id="photoPreview"
+                                        class="w-full h-full object-cover">
                                     {% else %}
-                                        <div class="photo-placeholder">
-                                            <i class="fas fa-user"></i>
-                                        </div>
+                                    <img id="photoPreview" class="w-full h-full object-cover hidden">
+                                    <div
+                                        class="w-full h-full flex items-center justify-center text-gray-400 photo-placeholder">
+                                        <i class="fas fa-user text-2xl"></i>
+                                    </div>
                                     {% endif %}
                                 </div>
-                                <div class="upload-controls">
-                                    <label for="{{ form.profile_image.id_for_label }}" class="upload-btn">
-                                        <i class="fas fa-camera"></i>
-                                        Change Photo
+                                <div>
+                                    <label for="{{ form.profile_image.id_for_label }}"
+                                        class="cursor-pointer bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition shadow-sm inline-flex items-center gap-2">
+                                        <i class="fas fa-camera"></i> Change Photo
                                     </label>
-                                    {{ form.profile_image }}
+                                    <div class="hidden">
+                                        {{ form.profile_image }}
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-2">JPG, GIF or PNG. Max size 800K</p>
                                 </div>
                             </div>
 
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label>Email Address <span class="required">*</span></label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-sm font-semibold text-gray-700">Email Address</label>
                                     {{ form.email }}
-                                    {% if form.email.errors %}
-                                        <div class="error">{{ form.email.errors.0 }}</div>
-                                    {% endif %}
+                                    <!-- Ensure your form widget has Tailwind classes or style it via JS/CSS if needed. Assuming default rendering, we might need to add classes via widget tweaks or JS. For now, let's wrap it. -->
+                                    <!-- To ensure Tailwind styling on Django form fields without widget tweaks, we can use a script or just simple CSS targeting inputs. Let's add simple CSS for inputs below. -->
                                 </div>
-
-                                <div class="form-group">
-                                    <label>Phone Number <span class="required">*</span></label>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-semibold text-gray-700">Phone Number</label>
                                     {{ form.phone_number }}
-                                    {% if form.phone_number.errors %}
-                                        <div class="error">{{ form.phone_number.errors.0 }}</div>
-                                    {% endif %}
                                 </div>
-
-                                <div class="form-group full-width">
-                                    <label>Address <span class="required">*</span></label>
+                                <div class="col-span-full space-y-2">
+                                    <label class="text-sm font-semibold text-gray-700">Address</label>
                                     {{ form.address }}
-                                    {% if form.address.errors %}
-                                        <div class="error">{{ form.address.errors.0 }}</div>
-                                    {% endif %}
                                 </div>
                             </div>
 
-                            <div class="form-actions">
-                                <button type="button" class="btn-reset" onclick="resetForm('profileForm')">
-                                    <i class="fas fa-undo"></i>
+                            <div class="pt-6 flex items-center justify-end gap-4 border-t border-gray-100">
+                                <button type="button" onclick="resetForm('profileForm')"
+                                    class="px-6 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition">
                                     Reset
                                 </button>
-                                <button type="submit" name="update_profile" class="btn-save">
-                                    <i class="fas fa-check"></i>
+                                <button type="submit" name="update_profile"
+                                    class="px-6 py-2.5 rounded-xl text-sm font-medium bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
                                     Save Changes
                                 </button>
                             </div>
@@ -115,157 +184,163 @@
 
                 <!-- Security Section -->
                 <div id="security-section" class="content-section">
-                    <div class="card">
-                        <form id="passwordForm" class="form" method="POST">
+                    <div class="glass-card p-8 border border-gray-100">
+                        <h3 class="text-lg font-bold text-gray-900 mb-6">Change Password</h3>
+                        <form id="passwordForm" method="POST" class="space-y-6">
                             {% csrf_token %}
                             {% for field in password_form %}
-                                <div class="form-group">
-                                    <label>{{ field.label }} <span class="required">*</span></label>
-                                    {{ field }}
-                                    {% if field.errors %}
-                                        <div class="error">{{ field.errors.0 }}</div>
-                                    {% endif %}
-                                    {% if field.help_text %}
-                                        <div class="help-text">{{ field.help_text }}</div>
-                                    {% endif %}
-                                </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-semibold text-gray-700">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                <p class="text-xs text-gray-400">{{ field.help_text }}</p>
+                                {% endif %}
+                                {% if field.errors %}
+                                <p class="text-xs text-red-500">{{ field.errors.0 }}</p>
+                                {% endif %}
+                            </div>
                             {% endfor %}
 
-                            <div class="form-actions">
-                                <button type="button" class="btn-reset" onclick="resetForm('passwordForm')">
-                                    <i class="fas fa-undo"></i>
+                            <div class="pt-6 flex items-center justify-end gap-4 border-t border-gray-100">
+                                <button type="button" onclick="resetForm('passwordForm')"
+                                    class="px-6 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition">
                                     Reset
                                 </button>
-                                <button type="submit" name="change_password" class="btn-save">
-                                    <i class="fas fa-key"></i>
+                                <button type="submit" name="change_password"
+                                    class="px-6 py-2.5 rounded-xl text-sm font-medium bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
                                     Update Password
                                 </button>
                             </div>
                         </form>
                     </div>
                 </div>
+
             </div>
         </div>
-    </div>
+    </main>
 
+    <!-- Toast Messages -->
     {% if messages %}
-    <div class="toast-container">
+    <div class="fixed bottom-5 right-5 z-50 space-y-2">
         {% for message in messages %}
-        <div class="toast {{ message.tags }}">
-            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
-            <span>{{ message }}</span>
+        <div class="bg-black text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-slide-up">
+            <i
+                class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %} text-{{ message.tags|yesno:'green-400,red-400' }}"></i>
+            <span class="text-sm font-medium">{{ message }}</span>
         </div>
         {% endfor %}
     </div>
     {% endif %}
-<script>
-    // ownerProfile.js
-document.addEventListener('DOMContentLoaded', function() {
-    // Tab Navigation
-    const navButtons = document.querySelectorAll('.nav-btn');
-    const contentSections = document.querySelectorAll('.content-section');
 
-    navButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Remove active class from all buttons and sections
-            navButtons.forEach(btn => btn.classList.remove('active'));
-            contentSections.forEach(section => section.classList.remove('active'));
+    <style>
+        /* Form Input Styling */
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
 
-            // Add active class to clicked button and corresponding section
-            button.classList.add('active');
-            document.getElementById(`${button.dataset.tab}-section`).classList.add('active');
-        });
-    });
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #000;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+        }
 
-    // Image Preview
-    const imageInput = document.querySelector('input[type="file"]');
-    if (imageInput) {
-        imageInput.addEventListener('change', function(e) {
-            if (e.target.files && e.target.files[0]) {
-                const reader = new FileReader();
-                const preview = document.getElementById('photoPreview');
+        @keyframes slide-up {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
 
-                reader.onload = function(e) {
-                    if (preview) {
-                        preview.src = e.target.result;
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .animate-slide-up {
+            animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Tab Navigation
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    navButtons.forEach(btn => btn.classList.remove('active', 'bg-black', 'text-white'));
+                    navButtons.forEach(btn => btn.classList.add('hover:bg-gray-100')); // Reset hover
+
+                    contentSections.forEach(section => section.classList.remove('active'));
+
+                    button.classList.add('active');
+                    document.getElementById(`${button.dataset.tab}-section`).classList.add('active');
+                });
+            });
+
+            // Image Preview
+            const imageInput = document.querySelector('input[type="file"]');
+            if (imageInput) {
+                imageInput.addEventListener('change', function (e) {
+                    if (e.target.files && e.target.files[0]) {
+                        const reader = new FileReader();
+                        const preview = document.getElementById('photoPreview');
+                        const placeholder = document.querySelector('.photo-placeholder');
+
+                        reader.onload = function (e) {
+                            if (preview) {
+                                preview.src = e.target.result;
+                                preview.classList.remove('hidden');
+                                if (placeholder) placeholder.classList.add('hidden');
+                            }
+                        }
+                        reader.readAsDataURL(e.target.files[0]);
+                    }
+                });
+            }
+
+            // Form Reset
+            window.resetForm = function (formId) {
+                const form = document.getElementById(formId);
+                if (form) {
+                    form.reset();
+                    // Reset preview if needed
+                    const preview = document.getElementById('photoPreview');
+                    const placeholder = document.querySelector('.photo-placeholder');
+                    if (preview && placeholder && formId === 'profileForm') {
+                        preview.classList.add('hidden');
+                        preview.src = '';
+                        placeholder.classList.remove('hidden');
                     }
                 }
+            };
 
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        });
-    }
-
-    // Form Reset Function
-    window.resetForm = function(formId) {
-        const form = document.getElementById(formId);
-        if (form) {
-            // Reset all input fields
-            const inputs = form.querySelectorAll('input:not([type="file"]), textarea');
-            inputs.forEach(input => {
-                input.value = '';
-                input.classList.remove('error');
+            // Auto-hide toasts
+            const toasts = document.querySelectorAll('.animate-slide-up');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(10px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
             });
-
-            // Reset file input if exists
-            const fileInput = form.querySelector('input[type="file"]');
-            if (fileInput) {
-                fileInput.value = '';
-            }
-
-            // Reset photo preview if exists
-            const photoPreview = document.getElementById('photoPreview');
-            const placeholder = document.querySelector('.photo-placeholder');
-            if (photoPreview) {
-                photoPreview.style.display = 'none';
-                if (placeholder) {
-                    placeholder.style.display = 'flex';
-                }
-            }
-
-            // Remove error messages
-            const errors = form.querySelectorAll('.error');
-            errors.forEach(error => error.remove());
-        }
-    };
-
-    // Toast Messages
-    const toasts = document.querySelectorAll('.toast');
-    toasts.forEach(toast => {
-        setTimeout(() => {
-            toast.style.animation = 'slideOut 0.3s ease forwards';
-            setTimeout(() => {
-                toast.remove();
-            }, 300);
-        }, 3000);
-    });
-
-    // Form Validation
-    const forms = document.querySelectorAll('.form');
-    forms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            const requiredFields = form.querySelectorAll('[required]');
-            let isValid = true;
-
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    field.classList.add('error');
-
-                    // Add error message
-                    const errorDiv = document.createElement('div');
-                    errorDiv.className = 'error';
-                    errorDiv.textContent = 'This field is required';
-                    field.parentElement.appendChild(errorDiv);
-                }
-            });
-
-            if (!isValid) {
-                e.preventDefault();
-            }
         });
-    });
-});
-</script>
+    </script>
 </body>
+
 </html>

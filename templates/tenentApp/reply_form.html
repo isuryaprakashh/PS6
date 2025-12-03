@@ -1,241 +1,109 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reply to Owner</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
+    <title>Reply to Owner - PS6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        .reply-container {
-            margin-top:5px;
-            padding: 20px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .reply-header {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #d63031;
-            position: relative;
-        }
-
-        .reply-header:after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 3px;
-            background: #e17055;
-            margin: 15px auto;
-        }
-
-        .message-card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 1px solid #eee;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .sender-info {
-            color: #d63031;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .property-info {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .property-info p {
-            margin: 8px 0;
-            color: #2d3436;
-        }
-
-        .message-content {
-            color: #2d3436;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #fff5f5;
-            border-radius: 8px;
-        }
-
-        .timestamp {
-            color: #636e72;
-            font-size: 0.9rem;
-        }
-
-        .reply-form {
-            background: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
-
-        .form-label {
-            color: #2d3436;
-            font-weight: 600;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .reply-textarea {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            resize: vertical;
-            min-height: 120px;
-            transition: border-color 0.3s ease;
-        }
-
-        .reply-textarea:focus {
-            outline: none;
-            border-color: #e17055;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .send-btn {
-            background: #00b894;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            font-weight: 500;
-        }
-
-        .send-btn:hover {
-            background: #00a187;
-        }
-
-        .back-btn {
-            background: #d63031;
-            color: white;
-            text-decoration: none;
-            padding: 12px 30px;
-            border-radius: 6px;
-            transition: background 0.3s ease;
-            font-weight: 500;
-        }
-
-        .back-btn:hover {
-            background: #c52929;
-            color: white;
-            text-decoration: none;
-        }
-
-        .icon-spacing {
-            margin-right: 8px;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body>
-    {% include 'Navbar/tenantNavBar.html' %}
 
-    <div class="reply-container">
-        <h1 class="reply-header">Reply to Message</h1>
+<body class="font-sans bg-gray-50 text-brand-dark antialiased min-h-screen flex flex-col">
 
-        <div class="message-card">
-            <div class="message-header">
-                <span class="sender-info">
-                    <i class="fas fa-user-circle icon-spacing"></i>{{ message.owner.username }}
-                </span>
-                <span class="timestamp">
-                    <i class="fas fa-clock icon-spacing"></i>{{ message.timestamp }}
-                </span>
+    {% include 'Navbar/tenentNavBar.html' %}
+
+    <main class="flex-grow container mx-auto px-4 py-24 max-w-2xl">
+
+        <div class="glass-card rounded-[2rem] overflow-hidden shadow-xl">
+
+            <!-- Header -->
+            <div class="bg-gray-900 p-8 text-white">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                            <i class="fas fa-reply text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold">Reply to Message</h1>
+                            <p class="text-white/60 text-sm">Conversation with {{ message.owner.username }}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs text-white/40 bg-white/10 px-3 py-1 rounded-full">{{ message.timestamp
+                        }}</span>
+                </div>
+
+                <!-- Original Message Preview -->
+                <div
+                    class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 text-sm text-white/80 italic">
+                    <i class="fas fa-quote-left text-white/20 mr-2"></i>{{ message.content }}
+                </div>
             </div>
 
-            <div class="property-info">
-                <p><i class="fas fa-home icon-spacing"></i><strong>Property:</strong> {{ message.property.title }}</p>
-                <p><i class="fas fa-map-marker-alt icon-spacing"></i><strong>Location:</strong> {{ message.property.location }}</p>
-            </div>
+            <div class="p-8 md:p-12">
 
-            <div class="message-content">
-                <i class="fas fa-envelope-open-text icon-spacing"></i>{{ message.content }}
-            </div>
+                <!-- Property Context -->
+                <div
+                    class="flex items-center gap-3 mb-8 text-sm text-gray-500 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                    <i class="fas fa-home text-gray-400"></i>
+                    <span>Re: <strong>{{ message.property.title }}</strong> in {{ message.property.location }}</span>
+                </div>
 
-            <div class="reply-form">
-                <form method="post">
+                <form method="post" class="space-y-6">
                     {% csrf_token %}
-                    <label class="form-label"><i class="fas fa-reply icon-spacing"></i>Your Reply</label>
-                    <textarea
-                        class="reply-textarea"
-                        name="content"
-                        placeholder="Type your reply here..."
-                        required></textarea>
 
-                    <div class="btn-group">
-                        <button type="submit" class="send-btn">
-                            <i class="fas fa-paper-plane icon-spacing"></i>Send Reply
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Your Reply</label>
+                        <textarea name="content" rows="6"
+                            class="w-full p-4 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-black focus:ring-0 transition resize-none"
+                            placeholder="Type your reply here..." required></textarea>
+                    </div>
+
+                    <div class="flex items-center gap-4 pt-4">
+                        <button type="submit"
+                            class="flex-grow bg-black text-white font-bold py-4 rounded-full hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2 group">
+                            Send Reply <i class="fas fa-paper-plane group-hover:translate-x-1 transition-transform"></i>
                         </button>
-                        <a href="{% url 'tenantapp:tenant_messages' %}" class="back-btn">
-                            <i class="fas fa-arrow-left icon-spacing"></i>Back to Messages
+                        <a href="{% url 'tenentapp:tenant_messages' %}"
+                            class="w-14 h-14 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition">
+                            <i class="fas fa-arrow-left"></i>
                         </a>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
 
-    <script>
-        // Add focus animation for textarea
-        const textarea = document.querySelector('.reply-textarea');
-        textarea.addEventListener('focus', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.1)';
-        });
+    </main>
 
-        textarea.addEventListener('blur', function() {
-            this.style.transform = 'none';
-            this.style.boxShadow = 'none';
-        });
-
-        // Form submission animation
-        const form = document.querySelector('form');
-        form.addEventListener('submit', function(e) {
-            const submitBtn = this.querySelector('.send-btn');
-            submitBtn.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                submitBtn.style.transform = 'scale(1)';
-            }, 100);
-        });
-    </script>
 </body>
+
 </html>

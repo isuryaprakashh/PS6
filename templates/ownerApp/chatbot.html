@@ -1,470 +1,217 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Owner Chatbot</title>
-    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        :root {
-            --gradient-primary: linear-gradient(45deg, #EE1133, #FF6347);
-            --gradient-secondary: linear-gradient(45deg, #FF6347, #EE1133);
-            --gradient-dark: linear-gradient(45deg, #4A4A4A, #333333);
-            --shadow-elevation: 0 10px 20px rgba(238, 17, 51, 0.15);
-            --animation-timing: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            --red-primary: #EE1133;
-            --text-dark: #4A4A4A;
-            --background-light: #f9f9f9;
-            --border-color: #e0e0e0;
+    <title>AI Assistant - PS6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 3s infinite',
+                    }
+                }
+            }
         }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--background-light);
-            margin: 0;
-            min-height: 100vh;
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .chat-container {
-            max-width: 100%;
-            height: calc(100vh - 60px);
-            background: rgba(249, 249, 249, 0.95);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-            animation: slideUp 0.8s var(--animation-timing);
+            height: calc(100vh - 180px);
         }
 
-        .chat-header {
-            background: var(--gradient-primary);
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-            animation: fadeInDown 0.8s var(--animation-timing);
-        }
-
-        .chat-header .logo {
-            font-size: 2rem;
-            color: #fff;
-            animation: pulse 2s infinite;
-            text-shadow: 0 2px 10px rgba(238, 17, 51, 0.3);
-        }
-
-        .chat-header h1 {
-            color: #fff;
-            font-size: 1.5rem;
-            margin: 0;
-            text-shadow: 0 2px 10px rgba(238, 17, 51, 0.3);
-            background: linear-gradient(45deg, #fff, rgba(255, 255, 255, 0.8));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .messages {
-            height: calc(100% - 180px);
-            padding: 2rem;
-            overflow-y: auto;
-            background:
-                radial-gradient(circle at 0% 0%, rgba(238, 17, 51, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(255, 99, 71, 0.1) 0%, transparent 50%);
-            scroll-behavior: smooth;
-        }
-
-        .message {
+        .message-bubble {
             max-width: 80%;
-            margin: 1.5rem 0;
             position: relative;
-            animation: messageSlide 0.5s var(--animation-timing);
         }
 
-        .user-message {
-            margin-left: auto;
-            background: var(--gradient-primary);
-            color: white;
-            border-radius: 20px 20px 5px 20px;
-            padding: 1rem 1.5rem;
-            box-shadow: var(--shadow-elevation);
-            transform-origin: right bottom;
+        .user-bubble {
+            border-bottom-right-radius: 4px;
         }
 
-        .bot-message {
-            margin-right: auto;
-            background: white;
-            color: #333;
-            border-radius: 20px 20px 20px 5px;
-            padding: 1rem 1.5rem;
-            box-shadow: var(--shadow-elevation);
-            transform-origin: left bottom;
-            border-left: 4px solid var(--red-primary);
+        .bot-bubble {
+            border-bottom-left-radius: 4px;
         }
 
-        .message-actions {
-            position: absolute;
-            top: -30px;
-            right: 0;
-            background: rgba(238, 17, 51, 0.9);
+        /* Custom Scrollbar */
+        .messages-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .messages-area::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.1);
             border-radius: 20px;
-            padding: 5px 10px;
-            display: flex;
-            gap: 10px;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-        }
-
-        .message:hover .message-actions {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .action-button {
-            color: white;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 5px;
-            transition: transform 0.3s ease;
-        }
-
-        .action-button:hover {
-            transform: scale(1.2);
-        }
-
-        .typing-indicator {
-            background: white;
-            padding: 1rem;
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: var(--shadow-elevation);
-            animation: slideIn 0.3s var(--animation-timing);
-        }
-
-        .typing-indicator::before {
-            content: '\f4ad';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            color: var(--red-primary);
-            font-size: 1.2rem;
-            animation: bounce 1s infinite;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--gradient-primary);
-            border-radius: 50%;
-            animation: typingBounce 1s infinite var(--animation-timing);
-        }
-
-        .show-more-button {
-            background: none;
-            border: none;
-            color: var(--red-primary);
-            font-size: 0.9rem;
-            padding: 5px 10px;
-            margin-top: 8px;
-            cursor: pointer;
-            display: block;
-            transition: all 0.3s ease;
-            border-radius: 15px;
-            font-weight: 500;
-            background: rgba(238, 17, 51, 0.1);
-        }
-
-        .show-more-button:hover {
-            background: rgba(238, 17, 51, 0.2);
-            transform: translateY(-1px);
-        }
-
-        .show-more-button:active {
-            transform: translateY(0);
-        }
-
-        #chatForm {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 1.5rem;
-            background: white;
-            display: flex;
-            gap: 1rem;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            animation: slideUp 0.8s var(--animation-timing);
-        }
-
-        #userMessage {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            border: 2px solid transparent;
-            border-radius: 25px;
-            font-size: 1rem;
-            background: #f0f2f5;
-            transition: all 0.3s ease;
-        }
-
-        #userMessage:focus {
-            outline: none;
-            border-color: var(--red-primary);
-            background: white;
-            box-shadow: 0 0 0 5px rgba(238, 17, 51, 0.1);
-        }
-
-        button[type="submit"] {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            padding: 1rem 2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        button[type="submit"]::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transform: translateX(-100%);
-        }
-
-        button[type="submit"]:hover::before {
-            transform: translateX(100%);
-            transition: transform 0.8s ease;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes fadeInDown {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes messageSlide {
-            from { transform: translateY(20px) scale(0.8); opacity: 0; }
-            to { transform: translateY(0) scale(1); opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes typingBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(-50px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .messages::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .messages::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 4px;
-        }
-
-        .messages::-webkit-scrollbar-thumb {
-            background: var(--gradient-primary);
-            border-radius: 4px;
-        }
-
-        @media (max-width: 768px) {
-            .message { max-width: 90%; }
-            .chat-header h1 { font-size: 1.2rem; }
-            #chatForm { padding: 1rem; }
         }
     </style>
 </head>
-<body>
+
+<body class="font-sans bg-gray-50 text-brand-dark antialiased min-h-screen flex flex-col">
+
     {% include 'Navbar/ownerNavBar.html' %}
 
-    <div class="chat-container">
-        <div class="chat-header">
-            <i class="fas fa-robot logo"></i>
-            <h1>AI Assistant for Owner</h1>
+    <main class="flex-grow container mx-auto px-4 py-24 max-w-5xl h-screen flex flex-col">
+
+        <div class="glass-card rounded-[2.5rem] flex-grow flex flex-col shadow-2xl overflow-hidden relative">
+
+            <!-- Header -->
+            <div
+                class="bg-white/80 backdrop-blur-md p-6 border-b border-gray-100 flex items-center justify-between z-10">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center text-white shadow-lg">
+                        <i class="fas fa-robot text-xl animate-bounce-slow"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-xl">AI Assistant</h1>
+                        <div class="flex items-center gap-2 text-xs text-green-500 font-medium">
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Online
+                        </div>
+                    </div>
+                </div>
+                <button class="text-gray-400 hover:text-red-500 transition" onclick="clearChat()">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="flex-grow p-6 overflow-y-auto messages-area bg-gray-50/50 space-y-6" id="chatMessages">
+                <!-- Welcome Message -->
+                <div class="flex items-end gap-3">
+                    <div
+                        class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex-shrink-0 flex items-center justify-center text-white text-xs">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div
+                        class="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm text-gray-700 text-sm leading-relaxed max-w-[80%] border border-gray-100">
+                        Hello! I'm your AI assistant. How can I help you manage your properties today?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-6 bg-white border-t border-gray-100">
+                <form id="chatForm" class="relative flex items-center gap-4">
+                    <div class="flex-grow relative">
+                        <input type="text" id="userMessage"
+                            class="w-full bg-gray-100 border-0 rounded-full px-6 py-4 pr-12 focus:bg-white focus:ring-2 focus:ring-black transition shadow-inner"
+                            placeholder="Type your message..." autocomplete="off">
+                        <button type="button"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition flex items-center justify-center">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                    <button type="submit"
+                        class="w-14 h-14 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition shadow-lg hover:scale-105 active:scale-95">
+                        <i class="fas fa-paper-plane text-lg ml-1"></i>
+                    </button>
+                </form>
+            </div>
+
         </div>
 
-        <div class="messages" id="chatMessages"></div>
-
-        <form id="chatForm">
-            <input
-                type="text"
-                id="userMessage"
-                placeholder="Ask me anything..."
-                required
-                autocomplete="off"
-            >
-            <button type="submit">
-                <i class="fas fa-paper-plane"></i>
-                Send
-            </button>
-        </form>
-    </div>
+    </main>
 
     <script>
         const form = document.getElementById('chatForm');
         const messagesDiv = document.getElementById('chatMessages');
         const userMessageInput = document.getElementById('userMessage');
-        const submitButton = form.querySelector('button[type="submit"]');
-        let editingMessage = null;
 
-        function truncateText(text) {
-            if (text.length <= 200) {
-                return { text, needsTruncation: false };
-            }
-            return {
-                text: text.substring(0, 200) + '...',
-                fullText: text,
-                needsTruncation: true
-            };
+        function scrollToBottom() {
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        function createMessageElement(message, isUser = true) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+        function addMessage(content, isUser) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex items-end gap-3 ${isUser ? 'flex-row-reverse' : ''} animate-fade-in-up`;
 
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
+            const avatar = document.createElement('div');
+            avatar.className = `w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs shadow-sm ${isUser ? 'bg-black' : 'bg-gradient-to-tr from-blue-600 to-purple-600'}`;
+            avatar.innerHTML = isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
 
-            if (!isUser) {
-                const truncated = truncateText(message);
-                const textSpan = document.createElement('span');
-                textSpan.textContent = truncated.text;
-                contentDiv.appendChild(textSpan);
+            const bubble = document.createElement('div');
+            bubble.className = `p-4 rounded-2xl shadow-sm text-sm leading-relaxed max-w-[80%] ${isUser ? 'bg-black text-white rounded-br-none' : 'bg-white text-gray-700 rounded-bl-none border border-gray-100'}`;
+            bubble.textContent = content;
 
-                if (truncated.needsTruncation) {
-                    const showMoreButton = document.createElement('button');
-                    showMoreButton.className = 'show-more-button';
-                    showMoreButton.textContent = 'Show more';
-                    let isExpanded = false;
-
-                    showMoreButton.onclick = () => {
-                        if (isExpanded) {
-                            textSpan.textContent = truncated.text;
-                            showMoreButton.textContent = 'Show more';
-                            showMoreButton.classList.remove('expanded');
-                        } else {
-                            textSpan.textContent = truncated.fullText;
-                            showMoreButton.textContent = 'Show less';
-                            showMoreButton.classList.add('expanded');
-                        }
-                        isExpanded = !isExpanded;
-                    };
-
-                    contentDiv.appendChild(showMoreButton);
-                }
-            } else {
-                contentDiv.textContent = message;
-            }
-
-            messageDiv.appendChild(contentDiv);
-
-            if (isUser) {
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'message-actions';
-
-                const editButton = document.createElement('button');
-                editButton.className = 'action-button';
-                editButton.innerHTML = '<i class="fas fa-edit"></i>';
-                editButton.onclick = () => editMessage(messageDiv, message);
-
-                const deleteButton = document.createElement('button');
-                deleteButton.className = 'action-button';
-                deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-                deleteButton.onclick = () => deleteMessageAndResponses(messageDiv);
-
-                actionsDiv.appendChild(editButton);
-                actionsDiv.appendChild(deleteButton);
-                messageDiv.appendChild(actionsDiv);
-            }
-
-            return messageDiv;
+            wrapper.appendChild(avatar);
+            wrapper.appendChild(bubble);
+            messagesDiv.appendChild(wrapper);
+            scrollToBottom();
         }
 
         function addTypingIndicator() {
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'typing-indicator';
-            typingDiv.innerHTML = `
-                <i class="fas fa-robot"></i>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
+            const wrapper = document.createElement('div');
+            wrapper.id = 'typingIndicator';
+            wrapper.className = 'flex items-end gap-3';
+            wrapper.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex-shrink-0 flex items-center justify-center text-white text-xs">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 flex gap-1">
+                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                </div>
             `;
-            messagesDiv.appendChild(typingDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            return typingDiv;
+            messagesDiv.appendChild(wrapper);
+            scrollToBottom();
         }
 
-        function deleteMessageAndResponses(messageDiv) {
-            let nextElement = messageDiv.nextElementSibling;
-            messageDiv.remove();
-            while (nextElement) {
-                const temp = nextElement.nextElementSibling;
-                nextElement.remove();
-                nextElement = temp;
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+        }
+
+        function clearChat() {
+            if (confirm('Clear chat history?')) {
+                messagesDiv.innerHTML = `
+                    <div class="flex items-end gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex-shrink-0 flex items-center justify-center text-white text-xs">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm text-gray-700 text-sm leading-relaxed max-w-[80%] border border-gray-100">
+                            Chat cleared. How can I help you?
+                        </div>
+                    </div>
+                `;
             }
         }
 
-        function editMessage(messageDiv, originalMessage) {
-            userMessageInput.value = originalMessage;
-            userMessageInput.focus();
-            editingMessage = messageDiv;
-        }
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = userMessageInput.value.trim();
+            if (!message) return;
 
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const userInput = userMessageInput.value.trim();
-
-            if (!userInput) return;
-
-            userMessageInput.disabled = true;
-            submitButton.disabled = true;
-
-            if (editingMessage) {
-                editingMessage.querySelector('.message-content').textContent = userInput;
-                let nextElement = editingMessage.nextElementSibling;
-                while (nextElement) {
-                    const temp = nextElement.nextElementSibling;
-                    nextElement.remove();
-                    nextElement = temp;
-                }
-                editingMessage = null;
-            } else {
-                const userMessageDiv = createMessageElement(userInput, true);
-                messagesDiv.appendChild(userMessageDiv);
-            }
-
+            // Add User Message
+            addMessage(message, true);
             userMessageInput.value = '';
-            const typingIndicator = addTypingIndicator();
+
+            // Show Typing Indicator
+            addTypingIndicator();
 
             try {
                 const response = await fetch('', {
@@ -473,28 +220,43 @@
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'X-CSRFToken': '{{ csrf_token }}'
                     },
-                    body: new URLSearchParams({ message: userInput })
+                    body: new URLSearchParams({ message: message })
                 });
 
                 const data = await response.json();
-                typingIndicator.remove();
+                removeTypingIndicator();
 
-                const botMessageDiv = createMessageElement(data.response, false);
-                messagesDiv.appendChild(botMessageDiv);
+                // Add Bot Response
+                if (data.response) {
+                    addMessage(data.response, false);
+                } else {
+                    addMessage("I'm sorry, I didn't understand that.", false);
+                }
+
             } catch (error) {
                 console.error('Error:', error);
-                typingIndicator.remove();
-                const errorDiv = createMessageElement('Sorry, something went wrong. Please try again.', false);
-                errorDiv.classList.add('error-message');
-                messagesDiv.appendChild(errorDiv);
-            } finally {
-                userMessageInput.disabled = false;
-                submitButton.disabled = false;
-                userMessageInput.focus();
+                removeTypingIndicator();
+                addMessage("Sorry, something went wrong. Please try again.", false);
             }
-
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
     </script>
+    <style>
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fade-in-up 0.3s ease-out forwards;
+        }
+    </style>
 </body>
+
 </html>

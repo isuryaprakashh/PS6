@@ -1,127 +1,237 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Form</title>
-    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
-    <link rel="stylesheet" href="{% static 'css/ownerApp/rental_contract.css' %}">
+    <title>Create Contract - PS6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
+
+        .paper-shadow {
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body>
-{% block body %}
+
+<body class="font-sans bg-gray-100 text-brand-dark antialiased min-h-screen flex flex-col">
+
     {% include 'Navbar/ownerNavBar.html' %}
 
-    <div class="contract-wrapper">
-        <div class="contract-container">
-            <h1 class="contract-title">Create {{ form.agreement_type.label }} Document</h1>
+    <main class="flex-grow container mx-auto px-4 py-24 max-w-4xl">
 
-            <form method="post" class="contract-form">
+        <div class="bg-white rounded-[2px] paper-shadow p-12 md:p-16 relative overflow-hidden">
+            <!-- Decorative Header Line -->
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-gray-800 to-gray-600"></div>
+
+            <div class="text-center mb-12">
+                <h1 class="font-serif text-4xl font-bold mb-2 text-gray-900">Legal Agreement Generator</h1>
+                <p class="text-gray-500 uppercase tracking-widest text-xs">Property Sales & Rental Management Platform
+                </p>
+                <div class="w-24 h-1 bg-gray-200 mx-auto mt-6"></div>
+            </div>
+
+            <form method="post" class="space-y-10">
                 {% csrf_token %}
 
-                <div class="form-section">
-                    {{ form.agreement_type.label_tag }}
-                    {{ form.agreement_type }}
+                <!-- Agreement Type Selection -->
+                <div class="bg-gray-50 p-8 rounded-xl border border-gray-100">
+                    <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Select Agreement
+                        Type</label>
+                    <div class="relative">
+                        <i class="fas fa-file-contract absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        {{ form.agreement_type }}
+                    </div>
                 </div>
 
-                <div id="rental-fields" class="form-section" style="display: none;">
-                    <h3>Rental Agreement Details</h3>
-                    <div class="field-group">
-                        <div class="form-field">
-                            {{ form.rental_amount.label_tag }}
+                <!-- Dynamic Sections -->
+                <div id="rental-fields" class="hidden animate-fade-in">
+                    <h3 class="font-serif text-2xl font-bold mb-6 border-b pb-2">Rental Terms</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Monthly Rent</label>
                             {{ form.rental_amount }}
                         </div>
-                        <div class="form-field">
-                            {{ form.security_deposit.label_tag }}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Security Deposit</label>
                             {{ form.security_deposit }}
                         </div>
-                    </div>
-                    <div class="field-group">
-                        <div class="form-field">
-                            {{ form.start_date.label_tag }}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Lease Start Date</label>
                             {{ form.start_date }}
                         </div>
-                        <div class="form-field">
-                            {{ form.end_date.label_tag }}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Lease End Date</label>
                             {{ form.end_date }}
                         </div>
                     </div>
                 </div>
 
-                <div id="sale-fields" class="form-section" style="display: none;">
-                    <h3>Sale Agreement Details</h3>
-                    <div class="field-group">
-                        <div class="form-field">
-                            {{ form.sale_price.label_tag }}
+                <div id="sale-fields" class="hidden animate-fade-in">
+                    <h3 class="font-serif text-2xl font-bold mb-6 border-b pb-2">Sale Terms</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Sale Price</label>
                             {{ form.sale_price }}
                         </div>
-                        <div class="form-field">
-                            {{ form.sale_date.label_tag }}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Closing Date</label>
                             {{ form.sale_date }}
                         </div>
                     </div>
                 </div>
 
-                <div class="form-section">
-                    <h3>Personal Details</h3>
-                    <div class="field-group">
-                        <div class="form-field">
-                            {{ form.tenant_name.label_tag }}
-                            {{ form.tenant_name }}
+                <!-- Personal Details -->
+                <div>
+                    <h3 class="font-serif text-2xl font-bold mb-6 border-b pb-2">Parties Involved</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                        <!-- Tenant/Buyer -->
+                        <div class="space-y-4">
+                            <h4 class="font-bold text-gray-800 text-sm uppercase">Tenant / Buyer</h4>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Full Name</label>
+                                {{ form.tenant_name }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Email Address</label>
+                                {{ form.tenant_email }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Current Address</label>
+                                {{ form.tenant_address }}
+                            </div>
                         </div>
-                        <div class="form-field">
-                            {{ form.tenant_email.label_tag }}
-                            {{ form.tenant_email }}
+
+                        <!-- Owner/Seller -->
+                        <div class="space-y-4">
+                            <h4 class="font-bold text-gray-800 text-sm uppercase">Owner / Seller</h4>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Full Name</label>
+                                {{ form.owner_name }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Email Address</label>
+                                {{ form.owner_email }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Current Address</label>
+                                {{ form.owner_address }}
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-field">
-                        {{ form.tenant_address.label_tag }}
-                        {{ form.tenant_address }}
-                    </div>
-
-                    <div class="field-group">
-                        <div class="form-field">
-                            {{ form.owner_name.label_tag }}
-                            {{ form.owner_name }}
+                    <!-- Property Details -->
+                    <div>
+                        <h4 class="font-bold text-gray-800 text-sm uppercase mb-4">Property Details</h4>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Property Address</label>
+                            {{ form.property_address }}
                         </div>
-                        <div class="form-field">
-                            {{ form.owner_email.label_tag }}
-                            {{ form.owner_email }}
-                        </div>
-                    </div>
-
-                    <div class="form-field">
-                        {{ form.owner_address.label_tag }}
-                        {{ form.owner_address }}
-                    </div>
-
-                    <div class="form-field">
-                        {{ form.property_address.label_tag }}
-                        {{ form.property_address }}
                     </div>
                 </div>
 
-                <button type="submit">Generate PDF</button>
+                <!-- Submit -->
+                <div class="pt-8 border-t border-gray-100">
+                    <button type="submit"
+                        class="w-full bg-black text-white font-bold py-4 rounded-lg hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2 group">
+                        <i class="fas fa-file-pdf text-red-500"></i> Generate Official Contract
+                    </button>
+                    <p class="text-center text-xs text-gray-400 mt-4">
+                        By clicking generate, you agree that all information provided is accurate and legally binding.
+                    </p>
+                </div>
+
             </form>
         </div>
-    </div>
-{% endblock %}
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const agreementTypeSelect = document.getElementById('id_agreement_type');
-        const rentalFields = document.getElementById('rental-fields');
-        const saleFields = document.getElementById('sale-fields');
+    </main>
 
-        function toggleFields() {
-            const selectedValue = agreementTypeSelect.value;
-            rentalFields.style.display = selectedValue === 'rental' ? 'block' : 'none';
-            saleFields.style.display = selectedValue === 'sale' ? 'block' : 'none';
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Style Form Fields
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.type !== 'checkbox' && input.type !== 'radio') {
+                    input.classList.add('w-full', 'p-3', 'bg-gray-50', 'border', 'border-gray-200', 'rounded-lg', 'focus:bg-white', 'focus:border-black', 'focus:ring-0', 'transition', 'text-sm');
+                    if (input.tagName === 'SELECT') {
+                        input.classList.add('pl-10'); // For icon spacing
+                    }
+                }
+            });
+
+            // Toggle Logic
+            const agreementTypeSelect = document.getElementById('id_agreement_type');
+            const rentalFields = document.getElementById('rental-fields');
+            const saleFields = document.getElementById('sale-fields');
+
+            function toggleFields() {
+                const selectedValue = agreementTypeSelect.value;
+                if (selectedValue === 'rental') {
+                    rentalFields.classList.remove('hidden');
+                    saleFields.classList.add('hidden');
+                } else if (selectedValue === 'sale') {
+                    saleFields.classList.remove('hidden');
+                    rentalFields.classList.add('hidden');
+                } else {
+                    rentalFields.classList.add('hidden');
+                    saleFields.classList.add('hidden');
+                }
+            }
+
+            if (agreementTypeSelect) {
+                agreementTypeSelect.addEventListener('change', toggleFields);
+                toggleFields();
+            }
+        });
+    </script>
+    <style>
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
         }
 
-        agreementTypeSelect.addEventListener('change', toggleFields);
-        toggleFields(); // Initial state
-    });
-</script>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </body>
+
 </html>

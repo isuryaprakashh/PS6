@@ -1,134 +1,294 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - PS6 Property Management</title>
-     <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
-    <link rel="stylesheet" href="{% static 'css/ownerApp/about_us.css' %}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>About Us - PS6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
 
+        details>summary {
+            list-style: none;
+        }
+
+        details>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details[open] summary~* {
+            animation: slideDown 0.3s ease-in-out;
+        }
+
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
-<body>
 
-  {% block body %}
+<body class="font-sans bg-gray-50 text-brand-dark antialiased min-h-screen flex flex-col">
+
     {% include 'Navbar/ownerNavBar.html' %}
-    <div class="container">
-        <h1>About Us</h1>
 
-        <!-- About Section -->
-        <div class="about-section">
-            <h2>Who We Are</h2>
-            <p>Welcome to <strong>Property Sales and Rental Management Platform</strong>, your trusted partner in managing all things related to property sales and rentals. Whether you're a property owner or a tenant, our platform is designed to provide seamless, efficient, and secure solutions for your needs.</p>
+    <main class="flex-grow">
 
-            <h2>Our Vision</h2>
-            <p>Our vision is to revolutionize property management by creating an integrated, user-friendly platform that caters to both property owners and tenants. We aim to simplify property transactions, document management, and communication between all parties involved.</p>
+        <!-- Hero Section -->
+        <section class="relative py-24 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 -z-10"></div>
+            <div class="container mx-auto px-4 text-center max-w-4xl">
+                <span class="text-blue-600 font-bold tracking-wider text-sm uppercase mb-4 block">Our Story</span>
+                <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                    Revolutionizing <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Property
+                        Management</span>
+                </h1>
+                <p class="text-xl text-gray-500 leading-relaxed mb-10">
+                    Your trusted partner in managing all things related to property sales and rentals.
+                    Seamless, efficient, and secure solutions for owners and tenants alike.
+                </p>
+            </div>
+        </section>
 
-            <h2>Our Mission</h2>
-            <p>We are dedicated to offering the best property management services by:</p>
-            <ul>
-                <li>Providing owners with the tools to upload, manage, and lease properties easily.</li>
-                <li>Giving tenants a transparent and hassle-free experience in searching and applying for properties.</li>
-                <li>Ensuring secure document handling and payment processing for all users.</li>
-            </ul>
+        <!-- Vision & Mission -->
+        <section class="py-16 container mx-auto px-4 max-w-7xl">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Vision -->
+                <div class="glass-card p-8 rounded-[2rem] hover:-translate-y-2 transition duration-300">
+                    <div
+                        class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-2xl mb-6">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Our Vision</h3>
+                    <p class="text-gray-500 leading-relaxed">
+                        To create an integrated, user-friendly platform that simplifies property transactions, document
+                        management, and communication between all parties.
+                    </p>
+                </div>
 
-            <h2>What We Offer</h2>
-            <ul>
-                <li><strong>Property Management:</strong> Owners can easily list, edit, and manage their properties, while tenants can search for properties based on their needs.</li>
-                <li><strong>Document Management:</strong> Secure handling of rental agreements, sales contracts, and other important documents.</li>
-                <li><strong>Tenant/Owner Communication:</strong> A built-in messaging system to ensure smooth communication between tenants and property owners.</li>
-                <li><strong>Rental and Payment Management:</strong> Track payments, lease agreements, and manage your rental contracts with ease.</li>
-            </ul>
-        </div>
+                <!-- Mission -->
+                <div class="glass-card p-8 rounded-[2rem] hover:-translate-y-2 transition duration-300">
+                    <div
+                        class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 text-2xl mb-6">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Our Mission</h3>
+                    <p class="text-gray-500 leading-relaxed">
+                        Dedicated to offering the best services by providing tools for easy management, transparent
+                        experiences, and secure handling of all processes.
+                    </p>
+                </div>
 
-        <!-- FAQ Section -->
-        <div class="faq-section">
-            <h2>Frequently Asked Questions (FAQs)</h2>
-
-            <details>
-                <summary>1. How do I upload a property on the platform?</summary>
-                <p>Uploading a property is simple for owners. Navigate to the "Upload Property" section in your owner dashboard, fill out the necessary fields such as property title, images, price, and description, and submit. Your property will be listed after review.</p>
-            </details>
-
-            <details>
-                <summary>2. Can tenants apply for properties online?</summary>
-                <p>Yes, tenants can easily apply online. Tenants can browse through available properties, view details, and submit an application with just a few clicks. You can track the status of your application through your tenant dashboard.</p>
-            </details>
-
-            <details>
-                <summary>3. Is my personal data secure on this platform?</summary>
-                <p>Yes, your data is secure. We use encryption and industry-standard security measures to protect your personal and payment information. Our privacy policy ensures that your data is only used for legitimate purposes and is not shared without your consent.</p>
-            </details>
-
-            <details>
-                <summary>4. How do I manage rental agreements on the platform?</summary>
-                <p>Managing agreements is straightforward. Once a rental agreement is drafted, both the tenant and the owner can view and sign it digitally. The signed agreements are stored securely in the document management section of your profile.</p>
-            </details>
-
-            <details>
-                <summary>5. What happens if I forget my password?</summary>
-                <p>You can easily reset it. If you forget your password, click on the "Forgot Password?" link on the login page, and follow the instructions to reset it via email.</p>
-            </details>
-        </div>
+                <!-- Offerings -->
+                <div class="glass-card p-8 rounded-[2rem] hover:-translate-y-2 transition duration-300">
+                    <div
+                        class="w-14 h-14 bg-pink-100 rounded-2xl flex items-center justify-center text-pink-600 text-2xl mb-6">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">What We Offer</h3>
+                    <ul class="text-gray-500 space-y-2 text-sm">
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-green-500"></i> Property
+                            Management</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-green-500"></i> Secure Documents
+                        </li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-green-500"></i> Direct
+                            Communication</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-green-500"></i> Payment Tracking
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
         <!-- Team Section -->
-<div class="team-section">
-    <h2 style="text-align: center; font-size: 2rem;">Meet the Team</h2>
-    <div class="team-container">
-        <div class="team-member">
-            <img src="{% static 'images/ownerApp/about_us/team1.png' %}" alt="Team Member 1" class="profile-pic">
-            <h3>K V PANEENDRA</h3>
-            <p>Backend Developer & Frontend Developer</p>
-            <div class="social-links">
-                <a href="https://github.com/phanee27" target="_blank" class="social-icon">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://linkedin.com/in/phanee27" target="_blank" class="social-icon">
-                    <i class="fab fa-linkedin-in"></i>
-                </a>
-                <a href="https://x.com/phanee2006" target="_blank" class="social-icon">
-                    <i class="fa-brands fa-x-twitter"></i>
-                </a>
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4 max-w-7xl">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold mb-4">Meet the Team</h2>
+                    <p class="text-gray-500">The minds behind the platform</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    <!-- Team Member 1 -->
+                    <div class="group text-center">
+                        <div
+                            class="relative w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden shadow-xl ring-4 ring-gray-50 group-hover:ring-blue-100 transition">
+                            <img src="{% static 'images/ownerApp/about_us/team1.png' %}" alt="K V PANEENDRA"
+                                class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="text-xl font-bold mb-1">K V PANEENDRA</h3>
+                        <p class="text-blue-600 text-sm font-medium mb-4">Fullstack Developer</p>
+                        <div class="flex justify-center gap-4">
+                            <a href="https://github.com/phanee27" target="_blank"
+                                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-black hover:text-white transition">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://linkedin.com/in/phanee27" target="_blank"
+                                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://x.com/phanee2006" target="_blank"
+                                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-black hover:text-white transition">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Team Member 2 -->
+                    <div class="group text-center">
+                        <div
+                            class="relative w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden shadow-xl ring-4 ring-gray-50 group-hover:ring-purple-100 transition">
+                            <img src="{% static 'images/ownerApp/about_us/team2.png' %}" alt="I SURYA PRAKASH"
+                                class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="text-xl font-bold mb-1">I SURYA PRAKASH</h3>
+                        <p class="text-purple-600 text-sm font-medium mb-4">Fullstack Developer</p>
+                        <div class="flex justify-center gap-4">
+                            <a href="https://github.com/isuryaprakashh" target="_blank"
+                                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-black hover:text-white transition">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://linkedin.com/in/isuryaprakashh" target="_blank"
+                                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://x.com/isuryaprakashh" target="_blank"
+                                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-black hover:text-white transition">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Team Member 3 -->
+                    <div class="group text-center">
+                        <div
+                            class="relative w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden shadow-xl ring-4 ring-gray-50 group-hover:ring-pink-100 transition">
+                            <img src="{% static 'images/ownerApp/about_us/team3.jpg' %}" alt="P LAKSHMI"
+                                class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="text-xl font-bold mb-1">P LAKSHMI</h3>
+                        <p class="text-pink-600 text-sm font-medium mb-4">Fullstack Developer</p>
+                        <div class="flex justify-center gap-4">
+                            <a href="https://github.com/Lakshmi30543" target="_blank"
+                                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-black hover:text-white transition">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/lakshmi-ponduri-01015b338/" target="_blank"
+                                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://x.com/emgbilaeh?t=Lt85Tb1MtEXXOpMLW1M5Fw&s=08" target="_blank"
+                                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-black hover:text-white transition">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="team-member">
-            <img src="{% static 'images/ownerApp/about_us/team2.jpg' %}" alt="Team Member 2" class="profile-pic">
-            <h3>I SURYA PRAKASH</h3>
-            <p>Frontend Developer & Backend Developer</p>
-            <div class="social-links">
-                <a href="https://github.com/isuryaprakashh" target="_blank" class="social-icon">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://linkedin.com/in/isuryaprakashh" target="_blank" class="social-icon">
-                    <i class="fab fa-linkedin-in"></i>
-                </a>
-                <a href="https://x.com/isuryaprakashh" target="_blank" class="social-icon">
-                    <i class="fa-brands fa-x-twitter"></i>
-                </a>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="py-16 container mx-auto px-4 max-w-3xl">
+            <h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+
+            <div class="space-y-4">
+                <details class="group glass-card rounded-2xl p-6 cursor-pointer">
+                    <summary class="flex justify-between items-center font-bold text-lg">
+                        How do I upload a property?
+                        <span class="transition group-open:rotate-180">
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </span>
+                    </summary>
+                    <p class="text-gray-500 mt-4 leading-relaxed">
+                        Uploading a property is simple. Navigate to the "Upload Property" section in your dashboard,
+                        fill out the details (title, price, images), and submit. Your listing will be live after a quick
+                        review.
+                    </p>
+                </details>
+
+                <details class="group glass-card rounded-2xl p-6 cursor-pointer">
+                    <summary class="flex justify-between items-center font-bold text-lg">
+                        Can tenants apply online?
+                        <span class="transition group-open:rotate-180">
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </span>
+                    </summary>
+                    <p class="text-gray-500 mt-4 leading-relaxed">
+                        Yes! Tenants can browse properties and submit applications directly through the platform. You
+                        can track all applications in your dashboard.
+                    </p>
+                </details>
+
+                <details class="group glass-card rounded-2xl p-6 cursor-pointer">
+                    <summary class="flex justify-between items-center font-bold text-lg">
+                        Is my data secure?
+                        <span class="transition group-open:rotate-180">
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </span>
+                    </summary>
+                    <p class="text-gray-500 mt-4 leading-relaxed">
+                        Absolutely. We use industry-standard encryption to protect your personal and payment
+                        information. Your privacy is our top priority.
+                    </p>
+                </details>
+
+                <details class="group glass-card rounded-2xl p-6 cursor-pointer">
+                    <summary class="flex justify-between items-center font-bold text-lg">
+                        How do I manage rental agreements?
+                        <span class="transition group-open:rotate-180">
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </span>
+                    </summary>
+                    <p class="text-gray-500 mt-4 leading-relaxed">
+                        Once drafted, agreements can be viewed and signed digitally by both parties. Signed documents
+                        are securely stored in your profile for easy access.
+                    </p>
+                </details>
             </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-black text-white py-8 text-center text-sm">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2024 Property Sales and Rental Management Platform. All rights reserved.</p>
         </div>
-        <div class="team-member">
-            <img src="{% static 'images/ownerApp/about_us/team3.jpg' %}" alt="Team Member 3" class="profile-pic">
-            <h3>P LAKSHMI</h3>
-            <p>UI/UX Designer</p>
-            <div class="social-links">
-                <a href="https://github.com/Lakshmi30543" target="_blank" class="social-icon">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://www.linkedin.com/in/lakshmi-ponduri-01015b338/" target="_blank" class="social-icon">
-                    <i class="fab fa-linkedin-in"></i>
-                </a>
-                <a href="https://x.com/emgbilaeh?t=Lt85Tb1MtEXXOpMLW1M5Fw&s=08" target="_blank" class="social-icon">
-                    <i class="fa-brands fa-x-twitter"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-    <footer>
-        &copy; 2024 - Property Sales and Rental Management Platform
     </footer>
-    {% endblock %}
 
 </body>
+
 </html>

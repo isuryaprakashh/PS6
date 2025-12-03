@@ -1,201 +1,177 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profiles</title>
-    <link rel="stylesheet" href="{% static 'css/adminApp/admin_Dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
-    <style>
-       /* General styling for the page header */
-.page-header {
-    text-align: center;
-    padding: 20px;
-    background-color: #f5f5f5; /* Light Gray */
-    color: #333; /* Dark Gray */
-    font-size: 24px;
-    font-weight: bold;
-    border-bottom: 1px solid #ddd;
-}
-
-/* Styling for the user sections */
-.user-section {
-    margin: 20px auto;
-    width: 100%; /* Full-width */
-    max-width: 1200px; /* Maximum width for larger screens */
-    background-color: #fff;
-    border: 1px solid #ddd; /* Light Gray border */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
-    padding: 20px;
-}
-
-.user-section h2 {
-    color: #333; /* Dark Gray */
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-/* Table styling */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-table thead th {
-    background-color: #f5f5f5; /* Light Gray */
-    color: #333; /* Dark Gray */
-    padding: 12px;
-    text-align: left;
-}
-
-table tbody tr {
-    border-top: 1px solid #ddd;
-}
-
-table tbody td {
-    padding: 10px;
-    color: #333; /* Dark Gray */
-}
-
-/* Button styling with squircles and hover enlarge effect */
-.button {
-    padding: 8px 16px;
-    border-radius: 20px; /* Squircles */
-    text-decoration: none;
-    color: white;
-    background-color: #a0522d; /* Warm Brown */
-    transition: background-color 0.3s ease, opacity 0.3s ease, transform 0.2s ease; /* Added transform for hover */
-}
-
-.button:hover {
-    background-color: #8a3f1c; /* Darker shade for hover */
-    opacity: 0.9;
-    transform: scale(1.05); /* Slightly enlarge the button on hover */
-}
-
-.delete {
-    background-color: #dc3545; /* Red for delete */
-}
-
-.delete:hover {
-    background-color: #c82333; /* Darker red for hover */
-    transform: scale(1.05); /* Slightly enlarge delete button on hover */
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .page-header {
-        font-size: 20px;
-    }
-
-    table thead {
-        display: none; /* Hide table headers for mobile */
-    }
-
-    table tbody, table tr, table td {
-        display: block;
-        width: 100%;
-    }
-
-    table tbody tr {
-        margin-bottom: 10px;
-        border: 1px solid #ddd;
-    }
-
-    table td {
-        text-align: right;
-        padding: 10px;
-        position: relative;
-    }
-
-    table td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 0;
-        padding-left: 10px;
-        font-weight: bold;
-        color: #333; /* Dark Gray */
-    }
-}
-
-    </style>
-
+    <title>User Profiles - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        // Confirm before deleting
-        function confirmDelete(event, url) {
-            event.preventDefault(); // Prevent default link action
-            if (confirm("Are you sure you want to delete this user?")) {
-                window.location.href = url; // If confirmed, go to the delete URL
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
             }
         }
     </script>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
 </head>
-<body>
-{% block body %}
+
+<body class="font-sans bg-gray-50 text-brand-dark antialiased min-h-screen flex flex-col">
 
     {% include 'Navbar/adminNavBar.html' %}
 
-    <!-- Page Header -->
-    <section class="page-header">
-        <h1>User Profiles</h1>
-    </section>
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-24 max-w-6xl">
 
-    <!-- Content Section -->
-    <section class="content">
-        <!-- Owners Section -->
-        <div class="user-section">
-            <center> <h2>Owners</h2></center>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for owner in owners %}
-                    <tr>
-                        <td>{{ owner.username }}</td>
-                        <td>{{ owner.email }}</td>
-                        <td>
-                            <a class="button" href="{% url 'adminapp:edit_owner' owner.id %}">Edit</a>
-                            <a class="button delete" href="#" onclick="confirmDelete(event, '{% url 'adminapp:delete_owner' owner.id %}')">Delete</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900">User Management</h1>
+            <p class="text-gray-500 mt-2">Manage property owners and tenants</p>
         </div>
 
-        <!-- Tenants Section -->
-        <div class="user-section">
-           <center><h2>Tenants</h2></center>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for tenant in tenants %}
-                    <tr>
-                        <td>{{ tenant.username }}</td>
-                        <td>{{ tenant.email }}</td>
-                        <td>
-                            <a class="button" href="{% url 'adminapp:edit_tenant' tenant.id %}">Edit</a>
-                            <a class="button delete" href="#" onclick="confirmDelete(event, '{% url 'adminapp:delete_tenant' tenant.id %}')">Delete</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <!-- Owners Section -->
+            <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border border-gray-100">
+                <div class="bg-black text-white px-8 py-6 flex items-center justify-between">
+                    <h2 class="text-xl font-bold">Owners</h2>
+                    <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-medium">{{ owners|length }}
+                        Users</span>
+                </div>
+
+                <div class="p-6">
+                    {% if owners %}
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-gray-400 text-sm border-b border-gray-100">
+                                    <th class="py-3 font-medium">User</th>
+                                    <th class="py-3 font-medium">Email</th>
+                                    <th class="py-3 font-medium text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm">
+                                {% for owner in owners %}
+                                <tr class="group hover:bg-gray-50 transition border-b border-gray-50 last:border-0">
+                                    <td class="py-4 pr-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                                                <i class="fas fa-user-tie text-xs"></i>
+                                            </div>
+                                            <span class="font-medium text-gray-900">{{ owner.username }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 text-gray-500">{{ owner.email }}</td>
+                                    <td class="py-4 text-right">
+                                        <div
+                                            class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <a href="{% url 'adminapp:edit_owner' owner.id %}"
+                                                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-black hover:text-white flex items-center justify-center transition"
+                                                title="Edit">
+                                                <i class="fas fa-pen text-xs"></i>
+                                            </a>
+                                            <a href="{% url 'adminapp:delete_owner' owner.id %}"
+                                                onclick="return confirm('Are you sure you want to delete this user?');"
+                                                class="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition"
+                                                title="Delete">
+                                                <i class="fas fa-trash text-xs"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-center text-gray-400 py-8">No owners found.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Tenants Section -->
+            <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border border-gray-100">
+                <div class="bg-gray-900 text-white px-8 py-6 flex items-center justify-between">
+                    <h2 class="text-xl font-bold">Tenants</h2>
+                    <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-medium">{{ tenants|length }}
+                        Users</span>
+                </div>
+
+                <div class="p-6">
+                    {% if tenants %}
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-gray-400 text-sm border-b border-gray-100">
+                                    <th class="py-3 font-medium">User</th>
+                                    <th class="py-3 font-medium">Email</th>
+                                    <th class="py-3 font-medium text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm">
+                                {% for tenant in tenants %}
+                                <tr class="group hover:bg-gray-50 transition border-b border-gray-50 last:border-0">
+                                    <td class="py-4 pr-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                                                <i class="fas fa-user text-xs"></i>
+                                            </div>
+                                            <span class="font-medium text-gray-900">{{ tenant.username }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 text-gray-500">{{ tenant.email }}</td>
+                                    <td class="py-4 text-right">
+                                        <div
+                                            class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <a href="{% url 'adminapp:edit_tenant' tenant.id %}"
+                                                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-black hover:text-white flex items-center justify-center transition"
+                                                title="Edit">
+                                                <i class="fas fa-pen text-xs"></i>
+                                            </a>
+                                            <a href="{% url 'adminapp:delete_tenant' tenant.id %}"
+                                                onclick="return confirm('Are you sure you want to delete this user?');"
+                                                class="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition"
+                                                title="Delete">
+                                                <i class="fas fa-trash text-xs"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-center text-gray-400 py-8">No tenants found.</p>
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
-    </section>
-{% endblock %}
+    </main>
+
 </body>
+
 </html>

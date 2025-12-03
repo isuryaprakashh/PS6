@@ -1,111 +1,422 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PS6 - Property Sales & Rental Management</title>
-    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>PS6 - Owner Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Glassmorphism Utilities */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
 
+        .glass-pill {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-bg {
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)),
+            url('{% static "images/hero-img2.jpg" %}');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Smooth accordion transition */
+        .accordion-content {
+            transition: max-height 0.3s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .accordion-item:hover .accordion-content {
+            max-height: 100px;
+        }
+
+        /* Hide scrollbar for cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+    </style>
 </head>
-<body>
-{% block body %}
 
-    <!-- Include the navbar here -->
-    {% include 'Navbar/ownerNavBar.html' %}
-    <!-- Hero Section -->
-     <section class="hero">
-        <video autoplay muted loop class="hero-video">
-            <source src="{% static 'images/Heroesection.mp4' %}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <div class="hero-content">
-            <h1>Manage Properties Effortlessly</h1>
-            <p>Your trusted platform for seamless property sales, rentals, and management.</p>
-            <a href="#properties" class="cta-btn">Explore Properties</a>
-        </div>
-    </section>
+<body class="font-sans text-brand-dark bg-white antialiased">
+    {% block body %}
 
+    <!-- HERO SECTION -->
+    <div class="relative w-full h-screen min-h-[700px] hero-bg flex flex-col items-center p-4">
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <h2>Platform Features</h2>
-        <div class="feature-grid">
-            <div class="feature-item">
-                <img src="{% static 'images/feature1.jpeg' %}" alt="Feature 1">
-                <h3>Real-Time Property Availability</h3>
-                <p>Instantly check the availability status of properties in real-time, making it easier for buyers and renters to find their ideal home.</p>
-            </div>
-            <div class="feature-item">
-                <img src="{% static 'images/feature2.jpeg' %}" alt="Feature 2">
-                <h3>Advanced Search Filters</h3>
-                <p>Find properties based on location, price range, property type, and more, ensuring users can easily discover their perfect property.</p>
-            </div>
-            <div class="feature-item">
-                <img src="{% static 'images/feature3.png' %}" alt="Feature 3">
-                <h3>User Ratings & Reviews</h3>
-                <p>Get honest feedback from previous tenants and property owners to make informed decisions.</p>
-            </div>
-            <div class="feature-item">
-                <img src="{% static 'images/feature4.png' %}" alt="Feature 4">
-                <h3>AI-Powered Chatbot Assistance</h3>
-                <p>Our intelligent chatbot is available 24/7 to assist with property searches, rental agreements, and other inquiries.</p>
-            </div>
-        </div>
-    </section>
+        <!-- Include the navbar here -->
+        {% include 'Navbar/ownerNavBar.html' %}
 
-    <!-- Property Listings Section -->
-    <section class="property-listings" id="properties">
-        <div class="section-header">
-            <h2>Featured Properties</h2>
-            <!-- View More Button aligned to the right -->
-            <div class="btn-conteiner">
-                <a class="btn-content" href="{% url 'ownerapp:property_list' %}">
-                    <span class="btn-title">VIEW MORE</span>
-                    <span class="icon-arrow">
-                        <svg width="66px" height="43px" viewBox="0 0 66 43" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <g id="arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <path id="arrow-icon-one" d="M40.1543933,3.89485454 L43.9763149,0.139296592 C44.1708311,-0.0518420739 44.4826329,-0.0518571125 44.6771675,0.139262789 L65.6916134,20.7848311 C66.0855801,21.1718824 66.0911863,21.8050225 65.704135,22.1989893 C65.7000188,22.2031791 65.6958657,22.2073326 65.6916762,22.2114492 L44.677098,42.8607841 C44.4825957,43.0519059 44.1708242,43.0519358 43.9762853,42.8608513 L40.1545186,39.1069479 C39.9575152,38.9134427 39.9546793,38.5968729 40.1481845,38.3998695 C40.1502893,38.3977268 40.1524132,38.395603 40.1545562,38.3934985 L56.9937789,21.8567812 C57.1908028,21.6632968 57.193672,21.3467273 57.0001876,21.1497035 C56.9980647,21.1475418 56.9959223,21.1453995 56.9937605,21.1432767 L40.1545208,4.60825197 C39.9574869,4.41477773 39.9546013,4.09820839 40.1480756,3.90117456 C40.1501626,3.89904911 40.1522686,3.89694235 40.1543933,3.89485454 Z" fill="#FFFFFF"></path>
-                                <path id="arrow-icon-two" d="M20.1543933,3.89485454 L23.9763149,0.139296592 C24.1708311,-0.0518420739 24.4826329,-0.0518571125 24.6771675,0.139262789 L45.6916134,20.7848311 C46.0855801,21.1718824 46.0911863,21.8050225 45.704135,22.1989893 C45.7000188,22.2031791 45.6958657,22.2073326 45.6916762,22.2114492 L24.677098,42.8607841 C24.4825957,43.0519059 24.1708242,43.0519358 23.9762853,42.8608513 L20.1545186,39.1069479 C19.9575152,38.9134427 19.9546793,38.5968729 20.1481845,38.3998695 C20.1502893,38.3977268 20.1524132,38.395603 20.1545562,38.3934985 L36.9937789,21.8567812 C37.1908028,21.6632968 37.193672,21.3467273 37.0001876,21.1497035 C36.9980647,21.1475418 36.9959223,21.1453995 36.9937605,21.1432767 L20.1545208,4.60825197 C19.9574869,4.41477773 19.9546013,4.09820839 20.1480756,3.90117456 C20.1501626,3.89904911 20.1522686,3.89694235 20.1543933,3.89485454 Z" fill="#FFFFFF"></path>
-                                <path id="arrow-icon-three" d="M0.154393339,3.89485454 L3.97631488,0.139296592 C4.17083111,-0.0518420739 4.48263286,-0.0518571125 4.67716753,0.139262789 L25.6916134,20.7848311 C26.0855801,21.1718824 26.0911863,21.8050225 25.704135,22.1989893 C25.7000188,22.2031791 25.6958657,22.2073326 25.6916762,22.2114492 L4.67709797,42.8607841 C4.48259567,43.0519059 4.17082418,43.0519358 3.97628526,42.8608513 L0.154518591,39.1069479 C-0.0424848215,38.9134427 -0.0453206733,38.5968729 0.148184538,38.3998695 C0.150289256,38.3977268 0.152413239,38.395603 0.154556228,38.3934985 L16.9937789,21.8567812 C17.1908028,21.6632968 17.193672,21.3467273 17.0001876,21.1497035 C16.9980647,21.1475418 16.9959223,21.1453995 16.9937605,21.1432767 L0.15452076,4.60825197 C-0.0425130651,4.41477773 -0.0453986756,4.09820839 0.148075568,3.90117456 C0.150162624,3.89904911 0.152268631,3.89694235 0.154393339,3.89485454 Z" fill="#FFFFFF"></path>
-                            </g>
-                        </svg>
-                    </span>
+        <!-- Hero Content -->
+        <div class="flex-1 flex flex-col justify-center w-full max-w-6xl mt-12 relative z-10">
+            <!-- Main Text -->
+            <div class="max-w-2xl text-white space-y-6">
+                <h1 class="text-5xl md:text-6xl font-semibold leading-tight">
+                    Maximize Your <br /> Property Potential
+                </h1>
+                <p class="text-gray-200 text-lg max-w-md font-light leading-relaxed">
+                    List your properties, find reliable tenants, and manage your rental income effortlessly.
+                </p>
+                <a href="{% url 'ownerapp:upload_property' %}"
+                    class="bg-white text-black font-medium px-8 py-3 rounded-full hover:bg-gray-100 transition mt-4 inline-block">
+                    List a Property
                 </a>
             </div>
+
+            <!-- Floating Badges -->
+            <div class="absolute right-0 bottom-32 md:bottom-24 flex flex-col gap-4 items-end pointer-events-none">
+                <div
+                    class="glass-pill px-6 py-3 rounded-full text-white text-sm pointer-events-auto cursor-pointer hover:bg-black/40 transition">
+                    High Occupancy Rates
+                </div>
+                <div
+                    class="glass-pill px-6 py-3 rounded-full text-white text-sm pointer-events-auto cursor-pointer hover:bg-black/40 transition">
+                    Secure Payments
+                </div>
+            </div>
         </div>
-        <div class="property-grid">
-            <div class="property">
-                <img src="{% static 'images/property1.jpg' %}" alt="Property 1">
-                <h3>Modern 3-bedroom apartment</h3>
-                <p>Modern 3-bedroom apartment with stunning city views.</p>
+
+        <!-- Bottom Fade -->
+        <div class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-white to-transparent"></div>
+    </div>
+
+    <!-- STATS SECTION -->
+    <section class="py-12 bg-white w-full border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div>
+                <h3 class="text-3xl font-bold text-gray-900">10+</h3>
+                <p class="text-gray-500 text-sm mt-1">Properties Managed</p>
             </div>
-            <div class="property">
-                <img src="{% static 'images/property2.jpg' %}" alt="Property 2">
-                <h3>Luxurious Villa</h3>
-                <p>Luxurious villa with private pool in the heart of the city.</p>
+            <div>
+                <h3 class="text-3xl font-bold text-gray-900">98%</h3>
+                <p class="text-gray-500 text-sm mt-1">Occupancy Rate</p>
             </div>
-            <div class="property">
-                <img src="{% static 'images/property3.jpg' %}" alt="Property 3"> <!-- Reused image for Property 3 -->
-                <h3>Modern Villa</h3>
-                <p>Kensington Gardens Residence.</p>
+            <div>
+                <h3 class="text-3xl font-bold text-gray-900">₹50k+</h3>
+                <p class="text-gray-500 text-sm mt-1">Total Revenue</p>
             </div>
-             <div class="property">
-                <img src="{% static 'images/property4.jpg' %}" alt="Property 3"> <!-- Reused image for Property 3 -->
-                <h3>Modern Villa in La Alquería</h3>
-                <p>Modern Villa in La Alquería, Marbella, Malaga, The Costa del Sol.</p>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="py-20 bg-white" id="features">
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+            <!-- Left Image -->
+            <div class="relative group">
+                <div class="overflow-hidden rounded-2xl shadow-xl">
+                    <img src="{% static 'images/home-img.jpg' %}" alt="Modern House"
+                        class="w-full h-[500px] object-cover transform group-hover:scale-105 transition duration-700 ease-in-out">
+                </div>
+                <!-- Decorative element -->
+                <div
+                    class="absolute -z-10 -bottom-6 -left-6 w-full h-full border-2 border-gray-100 rounded-2xl hidden md:block">
+                </div>
+            </div>
+
+            <!-- Right Content -->
+            <div class="space-y-8">
+                <h2 class="text-3xl md:text-4xl font-bold leading-tight text-gray-900">
+                    Tools to Grow Your Real Estate Business
+                </h2>
+
+                <!-- Accordion List -->
+                <div class="space-y-4">
+                    <!-- Item 1 -->
+                    <div
+                        class="accordion-item bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition cursor-pointer">
+                        <div class="p-5 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <span class="font-semibold text-lg">Tenant Screening</span>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                        <div class="accordion-content bg-white px-5 text-gray-500 text-sm">
+                            <p class="pb-4">Verify tenant backgrounds, credit scores, and rental history before
+                                approving.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div
+                        class="accordion-item bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition cursor-pointer">
+                        <div class="p-5 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                </div>
+                                <span class="font-semibold text-lg">Automated Payments</span>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                        <div class="accordion-content bg-white px-5 text-gray-500 text-sm">
+                            <p class="pb-4">Receive rent payments directly to your bank account on time, every time.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div
+                        class="accordion-item bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition cursor-pointer">
+                        <div class="p-5 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center">
+                                    <i class="fas fa-tools"></i>
+                                </div>
+                                <span class="font-semibold text-lg">Maintenance Requests</span>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
+                        <div class="accordion-content bg-white px-5 text-gray-500 text-sm">
+                            <p class="pb-4">Receive and manage maintenance requests from tenants efficiently.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- POPULAR PROPERTIES SECTION -->
+    <section class="py-20 bg-gray-50" id="properties">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 max-w-2xl mx-auto leading-tight">
+                    Your Top Performing Properties
+                </h2>
+                <p class="text-gray-500 text-sm mt-4 max-w-md mx-auto">
+                    A showcase of your most popular listings.
+                </p>
+                <div class="mt-6">
+                    <a href="{% url 'ownerapp:property_list' %}"
+                        class="inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-black hover:bg-gray-800 transition shadow-lg">
+                        Manage Listings
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
+
+                <!-- Property 1 -->
+                <div
+                    class="bg-white rounded-[2rem] p-4 shadow-xl max-w-sm w-full hover:shadow-2xl transition-shadow duration-300">
+                    <div class="relative h-64 w-full rounded-2xl overflow-hidden group">
+                        <img src="{% static 'images/property1.jpg' %}"
+                            class="object-cover w-full h-full transform group-hover:scale-105 transition duration-500"
+                            alt="House">
+                        <button
+                            class="absolute top-3 right-3 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 w-8 h-8 flex items-center justify-center backdrop-blur-sm transition">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+
+                    <div class="mt-5 px-1">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-xl text-gray-900 leading-tight">Modern Apartment</h3>
+                            <div class="flex items-center gap-1 mt-1">
+                                <i class="fas fa-star text-orange-400 text-xs"></i>
+                                <span class="text-sm font-bold text-gray-800">4.8</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 text-gray-500 text-sm mt-2">
+                            <i class="fas fa-map-marker-alt text-gray-400"></i>
+                            <span class="truncate">City Center</span>
+                        </div>
+
+                        <div
+                            class="flex items-center justify-between mt-5 text-gray-600 text-xs font-medium border-t border-dashed border-gray-200 pt-4">
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-bed text-gray-400 text-sm"></i>
+                                <span>3 Beds</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-bath text-gray-400 text-sm"></i>
+                                <span>2 Baths</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-6">
+                            <div class="flex flex-col">
+                                <span class="text-xl font-extrabold text-gray-900">₹2500 <span
+                                        class="text-sm font-semibold text-gray-500">/mo</span></span>
+                            </div>
+                            <button
+                                class="bg-black text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-gray-800 transition shadow-lg flex items-center gap-2">
+                                Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property 2 -->
+                <div
+                    class="bg-white rounded-[2rem] p-4 shadow-xl max-w-sm w-full hover:shadow-2xl transition-shadow duration-300">
+                    <div class="relative h-64 w-full rounded-2xl overflow-hidden group">
+                        <img src="{% static 'images/property2.jpg' %}"
+                            class="object-cover w-full h-full transform group-hover:scale-105 transition duration-500"
+                            alt="House">
+                        <button
+                            class="absolute top-3 right-3 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 w-8 h-8 flex items-center justify-center backdrop-blur-sm transition">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+
+                    <div class="mt-5 px-1">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-xl text-gray-900 leading-tight">Luxurious Villa</h3>
+                            <div class="flex items-center gap-1 mt-1">
+                                <i class="fas fa-star text-orange-400 text-xs"></i>
+                                <span class="text-sm font-bold text-gray-800">4.9</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 text-gray-500 text-sm mt-2">
+                            <i class="fas fa-map-marker-alt text-gray-400"></i>
+                            <span class="truncate">Suburbs</span>
+                        </div>
+
+                        <div
+                            class="flex items-center justify-between mt-5 text-gray-600 text-xs font-medium border-t border-dashed border-gray-200 pt-4">
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-bed text-gray-400 text-sm"></i>
+                                <span>5 Beds</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-bath text-gray-400 text-sm"></i>
+                                <span>4 Baths</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-6">
+                            <div class="flex flex-col">
+                                <span class="text-xl font-extrabold text-gray-900">₹5000 <span
+                                        class="text-sm font-semibold text-gray-500">/mo</span></span>
+                            </div>
+                            <button
+                                class="bg-black text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-gray-800 transition shadow-lg flex items-center gap-2">
+                                Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property 3 -->
+                <div
+                    class="bg-white rounded-[2rem] p-4 shadow-xl max-w-sm w-full hover:shadow-2xl transition-shadow duration-300">
+                    <div class="relative h-64 w-full rounded-2xl overflow-hidden group">
+                        <img src="{% static 'images/property3.jpg' %}"
+                            class="object-cover w-full h-full transform group-hover:scale-105 transition duration-500"
+                            alt="House">
+                        <button
+                            class="absolute top-3 right-3 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 w-8 h-8 flex items-center justify-center backdrop-blur-sm transition">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+
+                    <div class="mt-5 px-1">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-xl text-gray-900 leading-tight">Modern Villa</h3>
+                            <div class="flex items-center gap-1 mt-1">
+                                <i class="fas fa-star text-orange-400 text-xs"></i>
+                                <span class="text-sm font-bold text-gray-800">4.7</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 text-gray-500 text-sm mt-2">
+                            <i class="fas fa-map-marker-alt text-gray-400"></i>
+                            <span class="truncate">Coastal Area</span>
+                        </div>
+
+                        <div
+                            class="flex items-center justify-between mt-5 text-gray-600 text-xs font-medium border-t border-dashed border-gray-200 pt-4">
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-bed text-gray-400 text-sm"></i>
+                                <span>4 Beds</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-bath text-gray-400 text-sm"></i>
+                                <span>3 Baths</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-6">
+                            <div class="flex flex-col">
+                                <span class="text-xl font-extrabold text-gray-900">₹3500 <span
+                                        class="text-sm font-semibold text-gray-500">/mo</span></span>
+                            </div>
+                            <button
+                                class="bg-black text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-gray-800 transition shadow-lg flex items-center gap-2">
+                                Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
 
     <!-- Footer Section -->
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2024 PS6 - Property Sales & Rental Management. All rights reserved.</p>
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <h2 class="text-2xl font-bold mb-4">PS6 PROPERTIES</h2>
+            <p class="text-gray-400 mb-8">&copy; 2024 PS6 - Property Sales & Rental Management. All rights reserved.</p>
+            <div class="flex justify-center space-x-6">
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-linkedin-in"></i></a>
+            </div>
         </div>
     </footer>
 
-{% endblock %}
+    {% endblock %}
 </body>
+
 </html>

@@ -100,7 +100,7 @@ def dashboard(request):
         'owners': owners,
         'tenants': tenants
     }
-    return render(request, 'adminapp/Dashboard.html', context)
+    return render(request, 'adminApp/Dashboard.html', context)
 
 # Other views can remain the same for editing and deleting owners and tenants if needed
 
@@ -232,7 +232,7 @@ def admin_messages(request):
         'selected_owner': selected_owner
     }
 
-    return render(request, 'adminapp/messages.html', context)
+    return render(request, 'adminApp/messages.html', context)
 
 
 # views.py

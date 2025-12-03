@@ -1,28 +1,45 @@
 {% load static %}
-<header>
-    <div class="logo">
-        <a href="{% url 'adminapp:homepage' %}">
-            <img src="{% static 'images/logo.png' %}" alt="PS6 Logo">
-        </a>
+<nav
+    class="w-full max-w-5xl mt-6 bg-black/90 backdrop-blur-md border border-white/20 rounded-full px-6 py-3 flex justify-between items-center text-white z-20 mx-auto absolute left-0 right-0 top-0">
+    <div class="text-xl font-bold tracking-wide">PS6<span class="font-light">PROPERTIES</span></div>
+
+    <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-200">
+        <a href="{% url 'adminapp:homepage' %}" class="hover:text-white transition">Home</a>
+        <a href="{% url 'ownerapp:property_list' %}" class="hover:text-white transition">Find Properties</a>
+        <a href="{% url 'adminapp:upload_property' %}" class="hover:text-white transition">Upload Property</a>
+        <a href="{% url 'adminapp:dashboard' %}" class="hover:text-white transition">User Profiles</a>
+        <a href="{% url 'adminapp:admin_messages' %}" class="hover:text-white transition">Messages</a>
     </div>
-    <nav>
-        <ul>
-            <li><a href="{% url 'adminapp:homepage' %}">Home</a></li>
-            <li><a href="{% url 'ownerapp:property_list' %}">Find Properties</a></li>
-            <li><a href="{% url 'adminapp:upload_property' %}">Upload Property</a></li><!-- Changed space to hyphen -->
-            <li><a href="{% url 'adminapp:dashboard' %}">User Profiles</a></li>
-            <li><a href="{% url 'adminapp:admin_messages' %}">Messages</a></li>
-        </ul>
-    </nav>
-    <div class="auth-buttons">
+
+    <div class="flex items-center gap-4">
         {% if user.is_authenticated %}
-            <span class="welcome-message">Welcome {{ user.username }}</span>
-            <form action="{% url 'adminapp:logout_view' %}" method="POST" style="atdisplay:inline;">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn">Logout</button>
-            </form>
+        <span class="text-sm font-medium text-white hidden md:block">Welcome {{ user.username|upper }}</span>
+        <form action="{% url 'adminapp:logout_view' %}" method="POST" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit"
+                class="bg-white text-black text-sm font-semibold px-5 py-2 rounded-full hover:bg-gray-100 transition shadow-lg">
+                Logout
+            </button>
+        </form>
         {% else %}
-            <a href="{% url 'adminapp:login_or_register' %}" class="login-btn">Login/Register</a>
+        <div class="relative group">
+            <button
+                class="bg-white text-black text-sm font-semibold px-5 py-2 rounded-full hover:bg-gray-100 transition shadow-lg flex items-center gap-2">
+                Login/Register <i class="fas fa-chevron-down text-xs"></i>
+            </button>
+            <div class="absolute right-0 top-full pt-2 w-48 hidden group-hover:block">
+                <div class="bg-white rounded-xl shadow-xl py-2 border border-gray-100 overflow-hidden">
+                    <a href="{% url 'adminapp:login_or_register' %}"
+                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition flex items-center gap-2">
+                        <i class="fas fa-user text-gray-400"></i> Tenant Login
+                    </a>
+                    <a href="{% url 'ownerapp:login_or_register1' %}"
+                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition flex items-center gap-2">
+                        <i class="fas fa-user-tie text-gray-400"></i> Owner Login
+                    </a>
+                </div>
+            </div>
+        </div>
         {% endif %}
     </div>
-</header>
+</nav>

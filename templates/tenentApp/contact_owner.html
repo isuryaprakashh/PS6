@@ -1,40 +1,98 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Owner - {{ property.title }}</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/tenentApp/contact_form.css' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
+    </style>
 </head>
-<body>
-<div class="container mt-5">
-    <h1 class="text-center">Contact the Owner of {{ property.title }}</h1>
 
-    <form method="POST" action="{% url 'tenentapp:send_message' property.id %}" class="contact-form mt-4">
-        {% csrf_token %}
+<body class="font-sans bg-gray-50 text-brand-dark antialiased min-h-screen flex flex-col">
 
-        <div class="form-group">
-            <label for="name">Your Name</label>
-            <input type="text" id="name" name="name" class="form-control" placeholder="Enter your name" required>
+    {% include 'Navbar/tenentNavBar.html' %}
+
+    <main class="flex-grow container mx-auto px-4 py-24 max-w-2xl">
+
+        <div class="glass-card rounded-[2rem] p-8 md:p-12 shadow-xl">
+            <div class="text-center mb-8">
+                <div
+                    class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600 text-2xl">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <h1 class="text-3xl font-bold mb-2">Contact Owner</h1>
+                <p class="text-gray-500">Inquire about <span class="font-semibold text-black">{{ property.title
+                        }}</span></p>
+            </div>
+
+            <form method="POST" action="{% url 'tenentapp:send_message' property.id %}" class="space-y-6">
+                {% csrf_token %}
+
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
+                    <div class="relative">
+                        <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="name" name="name"
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-black focus:ring-0 transition"
+                            placeholder="Enter your name" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Your Email</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="email" name="email"
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-black focus:ring-0 transition"
+                            placeholder="Enter your email" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                    <textarea id="message" name="message" rows="5"
+                        class="w-full p-4 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:border-black focus:ring-0 transition resize-none"
+                        placeholder="I'm interested in this property..." required></textarea>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-black text-white font-bold py-4 rounded-full hover:bg-gray-800 transition shadow-lg flex items-center justify-center gap-2 group">
+                    Send Message <i class="fas fa-paper-plane group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </form>
         </div>
 
-        <div class="form-group">
-            <label for="email">Your Email</label>
-            <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
-        </div>
+    </main>
 
-        <div class="form-group">
-            <label for="message">Your Message</label>
-            <textarea id="message" name="message" class="form-control" rows="6" placeholder="Write your message here" required></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block send-button">Send Message</button>
-    </form>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

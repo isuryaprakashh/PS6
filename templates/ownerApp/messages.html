@@ -1,136 +1,176 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Owner Messages</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
-    <link rel="stylesheet" href="{% static 'css/ownerApp/messages.css' %}">
+    <title>Owner Messages - PS6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-bubble {
+            position: relative;
+        }
+
+        .message-bubble::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -8px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid #f3f4f6;
+        }
+
+        .reply-bubble::before {
+            left: auto;
+            right: -8px;
+            border-right: none;
+            border-left: 8px solid #000;
+        }
+    </style>
 </head>
-<body>
+
+<body class="font-sans bg-gray-50 text-brand-dark antialiased min-h-screen flex flex-col">
+
     {% include 'Navbar/ownerNavBar.html' %}
 
-    <div class="messages-container">
-        <div class="messages-header">
-            <h1>Messages from Tenants</h1>
-            <div class="header-line"></div>
+    <main class="flex-grow container mx-auto px-4 py-24 max-w-4xl">
+
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold mb-1">Inbox</h1>
+                <p class="text-gray-500">Messages from your tenants</p>
+            </div>
+            <div class="bg-white px-4 py-2 rounded-full shadow-sm text-sm font-medium text-gray-600">
+                <i class="fas fa-inbox mr-2"></i> {{ messages|length }} Messages
+            </div>
         </div>
 
         {% if messages %}
-            <div class="messages-list">
-                {% for message in messages %}
-                    <div class="message-card">
-                        <div class="message-header">
-                            <div class="user-info">
-                                <i class="fas fa-user-circle"></i>
-                                <h5>{{ message.tenant.username }}</h5>
-                            </div>
-                            <span class="timestamp">
-                                <i class="far fa-clock"></i>
-                                {{ message.timestamp }}
-                            </span>
+        <div class="space-y-6">
+            {% for message in messages %}
+            <div class="glass-card rounded-[2rem] p-6 transition hover:shadow-lg">
+
+                <!-- Header -->
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                            {{ message.tenant.username|slice:":1"|upper }}
                         </div>
-
-                        <div class="property-info">
-                            <div>
-                                <i class="fas fa-home"></i>
-                                <strong>Property:</strong> {{ message.property.title }}
-                            </div>
-                            <div>
-                                <i class="fas fa-map-marker-alt"></i>
-                                <strong>Location:</strong> {{ message.property.location }}
-                            </div>
-                        </div>
-
-                        <div class="message-content">
-                            <p>{{ message.content }}</p>
-                        </div>
-
-                        {% if message.replies.all %}
-                            <div class="replies-section">
-                                <h6><i class="fas fa-reply"></i> Replies</h6>
-                                <div class="replies-list">
-                                    {% for reply in message.replies.all %}
-                                        <div class="reply-item">
-                                            <div class="reply-header">
-                                                <strong>
-                                                    <i class="fas fa-user"></i>
-                                                    {% if reply.owner %}
-                                                        {{ reply.owner.username }}
-                                                    {% else %}
-                                                        {{ reply.tenant.username }}
-                                                    {% endif %}
-                                                </strong>
-                                                <small>{{ reply.timestamp }}</small>
-                                            </div>
-                                            <p>{{ reply.content }}</p>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endif %}
-
-                        <div class="reply-section">
-                            <button class="reply-btn" onclick="toggleReplyForm('replyForm{{ message.id }}')">
-                                <i class="fas fa-reply"></i> Reply
-                            </button>
-
-                            <div id="replyForm{{ message.id }}" class="reply-form">
-                                <form action="{% url 'ownerapp:reply_to_tenant' message.id %}" method="post">
-                                    {% csrf_token %}
-                                    <textarea class="form-control" name="content" rows="4" placeholder="Type your reply..."></textarea>
-                                    <button type="submit" class="send-btn">
-                                        <i class="fas fa-paper-plane"></i> Send Reply
-                                    </button>
-                                </form>
-                            </div>
+                        <div>
+                            <h3 class="font-bold text-lg">{{ message.tenant.username }}</h3>
+                            <p class="text-xs text-gray-500 flex items-center gap-1">
+                                <i class="far fa-clock"></i> {{ message.timestamp }}
+                            </p>
                         </div>
                     </div>
-                {% endfor %}
+                    <div class="text-right">
+                        <span class="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full font-medium">
+                            <i class="fas fa-home mr-1"></i> {{ message.property.title }}
+                        </span>
+                        <p class="text-xs text-gray-400 mt-1">{{ message.property.location }}</p>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="bg-gray-50 rounded-2xl rounded-tl-none p-4 mb-6 text-gray-700 leading-relaxed">
+                    {{ message.content }}
+                </div>
+
+                <!-- Replies -->
+                {% if message.replies.all %}
+                <div class="ml-8 pl-6 border-l-2 border-gray-100 space-y-4 mb-6">
+                    {% for reply in message.replies.all %}
+                    <div class="flex flex-col {% if reply.owner %}items-end{% else %}items-start{% endif %}">
+                        <div
+                            class="{% if reply.owner %}bg-black text-white rounded-br-none{% else %}bg-gray-100 text-gray-800 rounded-bl-none{% endif %} px-4 py-2 rounded-2xl max-w-[90%] text-sm">
+                            {{ reply.content }}
+                        </div>
+                        <span class="text-[10px] text-gray-400 mt-1">
+                            {% if reply.owner %}You{% else %}{{ reply.tenant.username }}{% endif %} • {{
+                            reply.timestamp|date:"M d, H:i" }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Action -->
+                <div class="border-t border-gray-100 pt-4">
+                    <button onclick="toggleReplyForm('replyForm{{ message.id }}')"
+                        class="text-sm font-bold text-blue-600 hover:text-blue-800 transition flex items-center gap-2">
+                        <i class="fas fa-reply"></i> Reply to {{ message.tenant.username }}
+                    </button>
+
+                    <div id="replyForm{{ message.id }}" class="hidden mt-4">
+                        <form action="{% url 'ownerapp:reply_to_tenant' message.id %}" method="post" class="relative">
+                            {% csrf_token %}
+                            <textarea name="content" rows="3"
+                                class="w-full bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-black p-4 pr-12 resize-none"
+                                placeholder="Type your reply here..."></textarea>
+                            <button type="submit"
+                                class="absolute right-2 bottom-2 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center hover:bg-gray-800 transition shadow-lg">
+                                <i class="fas fa-paper-plane text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
             </div>
+            {% endfor %}
+        </div>
         {% else %}
-            <div class="no-messages">
-                <i class="fas fa-inbox"></i>
-                <p>You have no messages at the moment.</p>
+        <div class="glass-card rounded-[2rem] p-12 text-center">
+            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-inbox text-3xl text-gray-300"></i>
             </div>
+            <h3 class="text-xl font-bold mb-2">No messages yet</h3>
+            <p class="text-gray-500">When tenants contact you, their messages will appear here.</p>
+        </div>
         {% endif %}
 
-        <a href="{% url 'ownerapp:ownerhomepage' %}" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
-    </div>
+    </main>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        function toggleReplyForm(formId) {
-    const form = document.getElementById(formId);
-    form.classList.toggle('active');
-}
-
-// Add smooth scroll and fade-in animations
-document.addEventListener('DOMContentLoaded', function() {
-    const messageCards = document.querySelectorAll('.message-card');
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+        function toggleReplyForm(id) {
+            const form = document.getElementById(id);
+            form.classList.toggle('hidden');
+            if (!form.classList.contains('hidden')) {
+                form.querySelector('textarea').focus();
             }
-        });
-    }, { threshold: 0.1 });
-
-    messageCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'all 0.5s ease';
-        observer.observe(card);
-    });
-});
+        }
     </script>
 </body>
+
 </html>

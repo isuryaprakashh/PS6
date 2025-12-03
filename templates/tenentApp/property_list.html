@@ -1,332 +1,145 @@
-{% include 'Navbar/tenentNavBar.html' %}
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property List</title>
-    <link rel="stylesheet" href="{% static 'css/tenentApp/property_list.css' %}">
-    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Find Properties - PS6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* Search and Filter Styles */
-        .search-filter-container {
-            background-color: #fff;
-            padding: 20px;
-            margin: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .search-input-group {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .search-input-group input[type="text"] {
-            flex: 1;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        .search-input-group select {
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            background-color: white;
-        }
-
-        .apply-button, .reset-button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .apply-button {
-            background-color: #E17055;
-            color: white;
-        }
-
-        .reset-button {
-            background-color: #636e72;
-            color: white;
-            text-decoration: none;
-        }
-
-        .apply-button:hover, .reset-button:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        /* Property List Styles */
-        .property-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .property-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .property-image-container {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            overflow: hidden;
+        .property-card:hover .property-image {
+            transform: scale(1.05);
         }
 
         .property-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .property-status {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 2;
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .status-badge.available {
-            background-color: #28a745;
-        }
-
-        .status-badge.not-available {
-            background-color: #dc3545;
-        }
-
-        .property-details {
-            padding: 20px;
-        }
-
-        .property-title {
-            margin: 0 0 10px 0;
-            font-size: 1.2rem;
-            color: #2d3436;
-        }
-
-        .property-description {
-            color: #636e72;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .property-price {
-            color: #2d3436;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-        }
-
-        .view-details {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #E17055;
-            color: white;
-            text-decoration: none;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .view-details:hover {
-            background-color: #d65d45;
-            transform: translateY(-2px);
-        }
-
-        .no-properties {
-            text-align: center;
-            padding: 40px;
-            color: #636e72;
-            grid-column: 1 / -1;
-        }
-
-        /* Animation Keyframes */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .ripple {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-            pointer-events: none;
-        }
-
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .search-input-group {
-                flex-direction: column;
-            }
-
-            .search-input-group input[type="text"],
-            .search-input-group select,
-            .apply-button,
-            .reset-button {
-                width: 100%;
-            }
-
-            .property-list {
-                grid-template-columns: 1fr;
-            }
+            transition: transform 0.5s ease;
         }
     </style>
 </head>
-<body>
 
-<!-- Search and Filter Section -->
-<div class="search-filter-container">
-    <form method="GET" action="{% url 'tenentapp:property_list' %}">
-        <div class="search-input-group">
-            <input type="text" name="search" placeholder="Search properties..." value="{{ request.GET.search }}">
-            <select name="filter" id="filter">
-                <option value="">Sort by</option>
-                <option value="price_asc" {% if request.GET.filter == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
-                <option value="price_desc" {% if request.GET.filter == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
-            </select>
-            <button type="submit" class="apply-button">Apply</button>
-            <a href="{% url 'tenentapp:property_list' %}?reset=true" class="reset-button">Reset</a>
+<body class="font-sans bg-gray-50 text-brand-dark antialiased min-h-screen flex flex-col">
+
+    {% include 'Navbar/tenentNavBar.html' %}
+
+    <main class="flex-grow container mx-auto px-4 py-24 max-w-7xl">
+
+        <!-- Header & Search -->
+        <div class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-gray-900 mb-6">Find Your Dream Home</h1>
+
+            <div class="max-w-4xl mx-auto">
+                <form method="GET" action="{% url 'tenentapp:property_list' %}"
+                    class="glass-panel rounded-full p-2 flex flex-col md:flex-row items-center gap-2 shadow-lg">
+                    <div class="flex-grow w-full md:w-auto relative">
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" name="search" value="{{ request.GET.search }}"
+                            class="w-full pl-10 pr-4 py-3 rounded-full bg-transparent border-none focus:ring-0 text-gray-700 placeholder-gray-400"
+                            placeholder="Search by location, title...">
+                    </div>
+
+                    <div class="w-full md:w-auto border-l border-gray-200 pl-2">
+                        <select name="filter"
+                            class="w-full md:w-48 py-3 px-4 rounded-full bg-transparent border-none focus:ring-0 text-gray-700 cursor-pointer">
+                            <option value="">Sort by</option>
+                            <option value="price_asc" {% if request.GET.filter == 'price_asc' %}selected{% endif %}>Price:
+                                Low to High</option>
+                            <option value="price_desc" {% if request.GET.filter == 'price_desc' %}selected{% endif %}>
+                                Price: High to Low</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-2 w-full md:w-auto p-1">
+                        <button type="submit"
+                            class="flex-1 md:flex-none bg-black text-white px-8 py-3 rounded-full font-medium hover:bg-gray-800 transition shadow-md">
+                            Search
+                        </button>
+                        <a href="{% url 'tenentapp:property_list' %}"
+                            class="flex-1 md:flex-none bg-gray-100 text-gray-600 px-6 py-3 rounded-full font-medium hover:bg-gray-200 transition text-center">
+                            <i class="fas fa-undo"></i>
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
-    </form>
-</div>
 
-<!-- Property List Section -->
-<div class="property-list">
-    {% for property in properties %}
-        <div class="property-card">
-            <div class="property-image-container">
-                <img src="{{ property.image.url }}" alt="{{ property.title }}" class="property-image">
-                <div class="property-status">
-                    <span class="status-badge {% if property.occupancy_status == 'Available' %}available{% else %}not-available{% endif %}">
-                        {{ property.occupancy_status }}
-                    </span>
+        <!-- Property Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for property in properties %}
+            <div
+                class="group bg-white rounded-[2rem] shadow-xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300">
+                <!-- Image Container -->
+                <div class="relative h-64 overflow-hidden">
+                    <img src="{{ property.image.url }}" alt="{{ property.title }}"
+                        class="property-image w-full h-full object-cover">
+                    <div class="absolute top-4 right-4">
+                        <span
+                            class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm
+                            {% if property.occupancy_status == 'Available' %}bg-green-500 text-white{% else %}bg-red-500 text-white{% endif %}">
+                            {{ property.occupancy_status }}
+                        </span>
+                    </div>
+                    <div
+                        class="absolute bottom-4 left-4 right-4 flex justify-between items-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span class="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl text-lg font-bold text-gray-900">
+                            ₹{{ property.price }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-1">{{ property.title }}</h3>
+                    <p class="text-gray-500 text-sm mb-4 line-clamp-2">{{ property.overview }}</p>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                        <a href="{% url 'tenentapp:property_detail' property.pk %}"
+                            class="text-sm font-semibold text-black hover:underline">
+                            View Details
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="property-details">
-                <h3 class="property-title">{{ property.title }}</h3>
-                <p class="property-description">{{ property.overview|truncatewords:20 }}</p>
-                <p class="property-price"><strong>₹{{ property.price }}</strong></p>
-                <a href="{% url 'tenentapp:property_detail' property.pk %}" class="view-details">View Details</a>
+            {% empty %}
+            <div class="col-span-full text-center py-20">
+                <div
+                    class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                    <i class="fas fa-home text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">No properties found</h3>
+                <p class="text-gray-500 mt-2">Try adjusting your search or filters</p>
             </div>
+            {% endfor %}
         </div>
-    {% empty %}
-        <div class="no-properties">
-            <i class="fas fa-home"></i>
-            <p>No properties found.</p>
-        </div>
-    {% endfor %}
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Animate property cards on load
-    const cards = document.querySelectorAll('.property-card');
-    cards.forEach((card, index) => {
-        setTimeout(() => {
-            card.style.animation = `fadeIn 0.5s ease forwards`;
-        }, index * 100);
-    });
-
-    // Add ripple effect to buttons
-    const buttons = document.querySelectorAll('.apply-button, .reset-button, .view-details');
-    buttons.forEach(button => {
-        button.addEventListener('click', createRipple);
-    });
-
-    // Smooth scroll for filter changes
-    document.querySelector('select[name="filter"]').addEventListener('change', function() {
-        window.scrollTo({
-            top: document.querySelector('.property-list').offsetTop - 100,
-            behavior: 'smooth'
-        });
-    });
-
-    // Add hover effect for property cards
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-10px)';
-        });
-
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-});
-
-function createRipple(event) {
-    const button = event.currentTarget;
-    const ripple = document.createElement('span');
-    ripple.classList.add('ripple');
-
-    const diameter = Math.max(button.clientWidth, button.clientHeight);
-    ripple.style.width = ripple.style.height = `${diameter}px`;
-
-    const rect = button.getBoundingClientRect();
-    ripple.style.left = `${event.clientX - rect.left - diameter / 2}px`;
-    ripple.style.top = `${event.clientY - rect.top - diameter / 2}px`;
-
-    button.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600);
-}
-
-// Add smooth scroll for search submit
-document.querySelector('form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    this.submit();
-    window.scrollTo({
-        top: document.querySelector('.property-list').offsetTop - 100,
-        behavior: 'smooth'
-    });
-});
-
-// Add loading animation for search
-document.querySelector('.apply-button').addEventListener('click', function() {
-    this.classList.add('loading');
-    setTimeout(() => this.classList.remove('loading'), 1000);
-});
-</script>
+    </main>
 
 </body>
+
 </html>

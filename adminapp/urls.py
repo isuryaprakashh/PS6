@@ -17,4 +17,6 @@ urlpatterns = [
     path('admin/messages/', views.admin_messages, name='admin_messages'),
 
     path('upload_property/',views.upload_property,name='upload_property'),
+    path('edit_property/<int:pk>/', views.edit_property, name='edit_property'),
+    path('delete_property/<int:pk>/', views.delete_property, name='delete_property'),
 ]

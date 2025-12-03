@@ -1,468 +1,157 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tenant Messages</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
+    <title>My Messages - PS6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        .messages-container {
-            margin-top: 5px;
-            padding: 20px;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .messages-header {
-            text-align: center;
-            color: #d63031;
-            margin-bottom: 40px;
-            position: relative;
-            font-size: 2.5rem;
-            font-weight: 600;
-        }
-
-        .messages-header:after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 3px;
-            background: #e17055;
-            margin: 15px auto;
-        }
-
-        .message-card {
-            background: #fff;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            border: 1px solid #eee;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .message-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .sender-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .sender-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(45deg, #e17055, #d63031);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            margin-right: 15px;
-            font-size: 1.2rem;
-            box-shadow: 0 2px 10px rgba(225, 112, 85, 0.3);
-        }
-
-        .sender-name {
-            color: #d63031;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .property-info {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .property-info:hover {
-            background: #f0f0f0;
-            transform: translateX(5px);
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            color: #2d3436;
-        }
-
-        .info-item i {
-            width: 25px;
-            color: #e17055;
-            margin-right: 10px;
-        }
-
-        .message-content {
-            color: #2d3436;
-            line-height: 1.6;
-            padding: 15px;
-            background: #fff5f5;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .message-content:hover {
-            background: #ffe5e5;
-            transform: translateX(5px);
-        }
-
-        .timestamp {
-            color: #636e72;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .timestamp i {
-            margin-right: 5px;
-            color: #e17055;
-        }
-
-        .replies-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px dashed #ddd;
-        }
-
-        .replies-header {
-            color: #2d3436;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-
-        .replies-header i {
-            margin-right: 8px;
-            color: #e17055;
-        }
-
-        .reply-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-            border-left: 3px solid #e17055;
-        }
-
-        .reply-item:hover {
-            transform: translateX(5px);
-            background: #f0f0f0;
-        }
-
-        .reply-btn {
-            background: none;
-            border: none;
-            color: #e17055;
-            padding: 8px 20px;
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-        }
-
-        .reply-btn i {
-            margin-right: 8px;
-            transition: transform 0.3s ease;
-        }
-
-        .reply-btn:hover {
-            color: #d63031;
-        }
-
-        .reply-btn:hover i {
-            transform: rotate(-45deg);
-        }
-
-        .reply-form {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            margin-top: 15px;
-        }
-
-        .reply-form.active {
-            max-height: 300px;
-        }
-
-        .reply-textarea {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            resize: none;
-            min-height: 100px;
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .reply-textarea:focus {
-            outline: none;
-            border-color: #e17055;
-            box-shadow: 0 0 0 3px rgba(225, 112, 85, 0.1);
-        }
-
-        .send-reply-btn {
-            background: linear-gradient(45deg, #00b894, #00d1a0);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .send-reply-btn i {
-            margin-right: 8px;
-        }
-
-        .send-reply-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.3);
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            padding: 12px 25px;
-            background: linear-gradient(45deg, #d63031, #e17055);
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            margin-top: 30px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(214, 48, 49, 0.2);
-        }
-
-        .back-btn i {
-            margin-right: 8px;
-        }
-
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(214, 48, 49, 0.3);
-            color: white;
-            text-decoration: none;
-        }
-
-        .no-messages {
-            text-align: center;
-            padding: 50px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            color: #636e72;
-        }
-
-        .no-messages i {
-            color: #e17055;
-            margin-bottom: 20px;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-            pointer-events: none;
-        }
-
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body>
+
+<body class="font-sans bg-gray-50 text-brand-dark antialiased min-h-screen flex flex-col">
+
     {% include 'Navbar/tenentNavBar.html' %}
 
-    <div class="messages-container">
-        <h1 class="messages-header">Messages from Owners</h1>
+    <main class="flex-grow container mx-auto px-4 py-24 max-w-4xl">
+
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold mb-1">My Conversations</h1>
+                <p class="text-gray-500">Chats with property owners</p>
+            </div>
+            <div class="bg-white px-4 py-2 rounded-full shadow-sm text-sm font-medium text-gray-600">
+                <i class="fas fa-comments mr-2"></i> {{ tenant_messages|length }} Chats
+            </div>
+        </div>
 
         {% if tenant_messages %}
-            <div class="messages-list">
-                {% for message in tenant_messages %}
-                    <div class="message-card" data-index="{{ forloop.counter0 }}">
-                        <div class="sender-info">
-                            <div class="sender-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <h5 class="sender-name">{{ message.owner.username }}</h5>
+        <div class="space-y-6">
+            {% for message in tenant_messages %}
+            <div class="glass-card rounded-[2rem] p-6 transition hover:shadow-lg">
+
+                <!-- Header -->
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                            {{ message.owner.username|slice:":1"|upper }}
                         </div>
-
-                        <div class="property-info">
-                            <div class="info-item">
-                                <i class="fas fa-home"></i>
-                                <span><strong>Property:</strong> {{ message.property.title }}</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span><strong>Location:</strong> {{ message.property.location }}</span>
-                            </div>
-                        </div>
-
-                        <div class="message-content">
-                            {{ message.content }}
-                        </div>
-
-                        <div class="timestamp">
-                            <i class="far fa-clock"></i>
-                            {{ message.timestamp }}
-                        </div>
-
-                        {% if message.replies.all %}
-                            <div class="replies-section">
-                                <h6 class="replies-header">
-                                    <i class="fas fa-reply-all"></i>
-                                    Previous Replies
-                                </h6>
-                                {% for reply in message.replies.all %}
-                                    <div class="reply-item">
-                                        <strong>
-                                            {% if reply.owner %}
-                                                {{ reply.owner.username }}
-                                            {% elif reply.tenant %}
-                                                {{ reply.tenant.username }}
-                                            {% else %}
-                                                Anonymous
-                                            {% endif %}
-                                        </strong>:
-                                        {{ reply.content }}
-                                        <div class="timestamp">
-                                            <i class="far fa-clock"></i>
-                                            {{ reply.timestamp }}
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-
-                        <button class="reply-btn" onclick="toggleReplyForm({{ message.id }})">
-                            <i class="fas fa-reply"></i>
-                            Reply
-                        </button>
-
-                        <div id="replyForm{{ message.id }}" class="reply-form">
-                            <form action="{% url 'tenentapp:reply_to_owner' message.id %}" method="post">
-                                {% csrf_token %}
-                                <textarea
-                                    class="reply-textarea"
-                                    name="content"
-                                    placeholder="Type your reply..."
-                                    required></textarea>
-                                <button type="submit" class="send-reply-btn">
-                                    <i class="fas fa-paper-plane"></i>
-                                    Send Reply
-                                </button>
-                            </form>
+                        <div>
+                            <h3 class="font-bold text-lg">{{ message.owner.username }}</h3>
+                            <p class="text-xs text-gray-500 flex items-center gap-1">
+                                <i class="far fa-clock"></i> {{ message.timestamp }}
+                            </p>
                         </div>
                     </div>
-                {% endfor %}
+                    <div class="text-right">
+                        <span class="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full font-medium">
+                            <i class="fas fa-home mr-1"></i> {{ message.property.title }}
+                        </span>
+                        <p class="text-xs text-gray-400 mt-1">{{ message.property.location }}</p>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="bg-gray-50 rounded-2xl rounded-tl-none p-4 mb-6 text-gray-700 leading-relaxed">
+                    {{ message.content }}
+                </div>
+
+                <!-- Replies -->
+                {% if message.replies.all %}
+                <div class="ml-8 pl-6 border-l-2 border-gray-100 space-y-4 mb-6">
+                    {% for reply in message.replies.all %}
+                    <div class="flex flex-col {% if reply.tenant %}items-end{% else %}items-start{% endif %}">
+                        <div
+                            class="{% if reply.tenant %}bg-black text-white rounded-br-none{% else %}bg-white border border-gray-200 text-gray-800 rounded-bl-none{% endif %} px-4 py-2 rounded-2xl max-w-[90%] text-sm shadow-sm">
+                            {{ reply.content }}
+                        </div>
+                        <span class="text-[10px] text-gray-400 mt-1">
+                            {% if reply.tenant %}You{% else %}{{ reply.owner.username }}{% endif %} • {{
+                            reply.timestamp|date:"M d, H:i" }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Action -->
+                <div class="border-t border-gray-100 pt-4">
+                    <button onclick="toggleReplyForm('replyForm{{ message.id }}')"
+                        class="text-sm font-bold text-green-600 hover:text-green-800 transition flex items-center gap-2">
+                        <i class="fas fa-reply"></i> Reply to {{ message.owner.username }}
+                    </button>
+
+                    <div id="replyForm{{ message.id }}" class="hidden mt-4">
+                        <form action="{% url 'tenentapp:reply_to_owner' message.id %}" method="post" class="relative">
+                            {% csrf_token %}
+                            <textarea name="content" rows="3"
+                                class="w-full bg-gray-50 rounded-xl border-0 focus:ring-2 focus:ring-black p-4 pr-12 resize-none"
+                                placeholder="Type your reply here..."></textarea>
+                            <button type="submit"
+                                class="absolute right-2 bottom-2 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center hover:bg-gray-800 transition shadow-lg">
+                                <i class="fas fa-paper-plane text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
             </div>
+            {% endfor %}
+        </div>
         {% else %}
-            <div class="no-messages">
-                <i class="fas fa-inbox fa-3x"></i>
-                <p>You have no messages at the moment.</p>
+        <div class="glass-card rounded-[2rem] p-12 text-center">
+            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-comments text-3xl text-gray-300"></i>
             </div>
+            <h3 class="text-xl font-bold mb-2">No conversations yet</h3>
+            <p class="text-gray-500 mb-6">Start a conversation by contacting an owner from a property page.</p>
+            <a href="{% url 'tenentapp:property_list' %}"
+                class="inline-block bg-black text-white px-6 py-3 rounded-full font-bold hover:bg-gray-800 transition">
+                Browse Properties
+            </a>
+        </div>
         {% endif %}
 
-        <a href="{% url 'tenentapp:tenenthomepage' %}" class="back-btn">
-            <i class="fas fa-arrow-left"></i>
-            Back to Dashboard
-        </a>
-    </div>
+    </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animate messages on load
-            const messages = document.querySelectorAll('.message-card');
-            messages.forEach((message) => {
-                const index = message.dataset.index;
-                setTimeout(() => {
-                    message.style.opacity = '1';
-                    message.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-
-            // Add ripple effect to buttons
-            const buttons = document.querySelectorAll('.send-reply-btn, .back-btn');
-            buttons.forEach(button => {
-                button.addEventListener('click', createRipple);
-            });
-
-            // Initialize textareas
-            document.querySelectorAll('.reply-textarea').forEach(textarea => {
-                textarea.addEventListener('input', autoResize);
-            });
-        });
-
-        function createRipple(event) {
-            const button = event.currentTarget;
-            const ripple = document.createElement('span');
-            ripple.classList.add('ripple');
-
-            const diameter = Math.max(button.clientWidth, button.clientHeight);
-            ripple.style.width = ripple.style.height = `${diameter}px`;
-
-            const rect = button.getBoundingClientRect();
-            ripple.style.left = `${event.clientX - rect.left - diameter / 2}px`;
-            ripple.style.top = `${event.clientY - rect.top - diameter / 2}px`;
-
-            button.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
-        }
-
-        function toggleReplyForm(messageId) {
-            const form = document.getElementById(`replyForm${messageId}`);
-            form.classList.toggle('active');
-
-            if (form.classList.contains('active')) {
+        function toggleReplyForm(id) {
+            const form = document.getElementById(id);
+            form.classList.toggle('hidden');
+            if (!form.classList.contains('hidden')) {
                 form.querySelector('textarea').focus();
-                form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
-        }
-
-        function autoResize() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
         }
     </script>
 </body>
+
 </html>

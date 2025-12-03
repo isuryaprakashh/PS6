@@ -1,473 +1,530 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Property</title>
-    <link rel="stylesheet" href="{% static 'css/adminApp/homepage.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/ownerApp/upload_property.css' %}">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <title>Edit Property - PS6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            light: '#f8fafc',
+                            accent: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .step.active .step-icon {
+            background-color: #000;
+            color: #fff;
+            border-color: #000;
+        }
+
+        .step.active .step-label {
+            color: #000;
+            font-weight: 600;
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Leaflet Map Customization */
+        .leaflet-container {
+            border-radius: 1rem;
+            z-index: 0;
+        }
+    </style>
 </head>
 
-<body>
-    {% block body %}
+<body class="font-sans bg-gray-50 text-brand-dark antialiased min-h-screen flex flex-col">
+
     {% include 'Navbar/ownerNavBar.html' %}
 
-    <div class="page-container">
-        <!-- Left Side - Progress Sidebar -->
-        <div class="progress-sidebar">
-            <div class="progress-header">
-                <h3><i class="fas fa-edit"></i> Edit Property</h3>
-                <p>Update property information below</p>
-            </div>
-            <div class="progress-steps">
-                <div class="step active">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Basic Information</span>
-                </div>
-                <div class="step">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Location Details</span>
-                </div>
-                <div class="step">
-                    <i class="fas fa-images"></i>
-                    <span>Property Images</span>
-                </div>
-                <div class="step">
-                    <i class="fas fa-list"></i>
-                    <span>Additional Details</span>
-                </div>
-            </div>
-            <div class="upload-tips">
-                <h4><i class="fas fa-lightbulb"></i> Editing Tips</h4>
-                <ul>
-                    <li>Update outdated information</li>
-                    <li>Verify location details</li>
-                    <li>Add new high-quality images</li>
-                    <li>Review all amenities</li>
-                </ul>
-            </div>
-        </div>
+    <main class="flex-grow container mx-auto px-4 py-24 max-w-7xl">
 
-        <!-- Right Side - Form Container -->
-        <div class="form-container">
-            <div class="form-header">
-                <h2>Edit Property Details</h2>
-                <p>Update the information below</p>
+        <div class="flex flex-col lg:flex-row gap-8">
+
+            <!-- Sidebar / Progress -->
+            <div class="lg:w-1/4">
+                <div class="glass-card rounded-[2rem] p-6 sticky top-24">
+                    <div class="mb-8">
+                        <h1 class="text-2xl font-bold mb-2">Edit Property</h1>
+                        <p class="text-gray-500 text-sm">Update property details</p>
+                    </div>
+
+                    <div class="space-y-6 relative">
+                        <!-- Connecting Line -->
+                        <div class="absolute left-4 top-4 bottom-4 w-0.5 bg-gray-100 -z-10"></div>
+
+                        <!-- Steps -->
+                        <div class="step active flex items-center gap-4 cursor-pointer" onclick="goToStep(0)">
+                            <div
+                                class="step-icon w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 transition-colors z-10">
+                                <i class="fas fa-info text-xs"></i>
+                            </div>
+                            <span class="step-label text-gray-500 transition-colors">Basic Info</span>
+                        </div>
+                        <div class="step flex items-center gap-4 cursor-pointer" onclick="goToStep(1)">
+                            <div
+                                class="step-icon w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 transition-colors z-10">
+                                <i class="fas fa-map-marker-alt text-xs"></i>
+                            </div>
+                            <span class="step-label text-gray-500 transition-colors">Location</span>
+                        </div>
+                        <div class="step flex items-center gap-4 cursor-pointer" onclick="goToStep(2)">
+                            <div
+                                class="step-icon w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 transition-colors z-10">
+                                <i class="fas fa-images text-xs"></i>
+                            </div>
+                            <span class="step-label text-gray-500 transition-colors">Images</span>
+                        </div>
+                        <div class="step flex items-center gap-4 cursor-pointer" onclick="goToStep(3)">
+                            <div
+                                class="step-icon w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 transition-colors z-10">
+                                <i class="fas fa-list text-xs"></i>
+                            </div>
+                            <span class="step-label text-gray-500 transition-colors">Details</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-gray-100">
+                        <h4 class="font-bold text-sm mb-3 flex items-center gap-2">
+                            <i class="fas fa-lightbulb text-yellow-500"></i> Editing Tips
+                        </h4>
+                        <ul class="text-xs text-gray-500 space-y-2 list-disc pl-4">
+                            <li>Keep information up to date</li>
+                            <li>Refresh images periodically</li>
+                            <li>Check location accuracy</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
-            <form class="upload-property-form" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
+            <!-- Main Form Area -->
+            <div class="lg:w-3/4">
+                <form method="POST" enctype="multipart/form-data" class="glass-card rounded-[2rem] p-8 shadow-xl"
+                    id="uploadForm">
+                    {% csrf_token %}
 
-                <div class="form-sections">
-                    <!-- Basic Information Section -->
-                    <div class="form-section active" id="basic-info">
-                        <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                {{ form.title.label_tag }}
+                    <!-- Step 1: Basic Info -->
+                    <div class="form-section active" id="step-0">
+                        <h2 class="text-2xl font-bold mb-6">Basic Information</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Property Title</label>
                                 {{ form.title }}
                             </div>
-
-                            <div class="form-group">
-                                {{ form.property_type.label_tag }}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Property Type</label>
                                 {{ form.property_type }}
                             </div>
-
-                            <div class="form-group">
-                                {{ form.price.label_tag }}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Price (₹)</label>
                                 {{ form.price }}
                             </div>
-
-                            <div class="form-group">
-                                {{ form.overview.label_tag }}
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Overview (Short
+                                    Description)</label>
                                 {{ form.overview }}
                             </div>
-
-                            <div class="form-group">
-                                {{ form.description.label_tag }}
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Full Description</label>
                                 {{ form.description }}
                             </div>
                         </div>
                     </div>
 
-                    <!-- Location Section -->
-                    <div class="form-section" id="location">
-                        <h3><i class="fas fa-map-marker-alt"></i> Location Details</h3>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                {{ form.location.label_tag }}
+                    <!-- Step 2: Location -->
+                    <div class="form-section" id="step-1">
+                        <h2 class="text-2xl font-bold mb-6">Location Details</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Location/Area</label>
                                 {{ form.location }}
-                                <div class="error-message"></div>
                             </div>
-
-                            <div class="form-group">
-                                {{ form.address.label_tag }}
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Full Address</label>
                                 {{ form.address }}
-                                <div class="error-message"></div>
                             </div>
-
-                            <div class="form-group">
-                                {{ form.state.label_tag }}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
                                 {{ form.state }}
-                                <div class="error-message"></div>
                             </div>
-
-                            <div class="form-group">
-                                {{ form.pincode.label_tag }}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
                                 {{ form.pincode }}
-                                <div class="error-message"></div>
                             </div>
 
-                            <div class="form-group map-group">
-                                <label>Select Location on Map</label>
-                                <div class="location-url-container">
-                                    <button type="button" class="current-location-btn" onclick="useCurrentLocation()">
-                                        <i class="fas fa-map-marker-alt"></i> Use Current Location
+                            <!-- Map Integration -->
+                            <div class="col-span-2 mt-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block text-sm font-medium text-gray-700">Pin Location on Map</label>
+                                    <button type="button" onclick="useCurrentLocation()"
+                                        class="text-xs bg-black text-white px-3 py-1 rounded-full hover:bg-gray-800 transition">
+                                        <i class="fas fa-crosshairs mr-1"></i> Use Current Location
                                     </button>
                                 </div>
-                                <div class="map-container">
-                                    <div id="map" class="leaflet-map" style="height: 300px;"></div>
+                                <div id="map" class="h-64 w-full rounded-xl border border-gray-200"></div>
+                                <div class="mt-2 text-xs text-gray-500 flex justify-between">
+                                    <span>Drag marker to exact location</span>
+                                    <a href="#" id="location-preview-link" target="_blank"
+                                        class="text-blue-500 hover:underline">View on OpenStreetMap</a>
                                 </div>
-                                <div class="location-preview">
-                                    <label>Location URL Preview:</label>
-                                    <a href="#" id="location-preview-link" target="_blank">View on OpenStreetMap</a>
-                                </div>
-                                {{ form.location_url }}
+                                {{ form.location_url }} <!-- Hidden field usually -->
                             </div>
                         </div>
                     </div>
 
-                    <!-- Images Section -->
-                    <div class="form-section" id="images">
-                        <h3><i class="fas fa-images"></i> Property Images</h3>
-                        <div class="image-upload-container">
-                            <div class="form-group">
-                                {% if property.image %}
-                                    <img src="{{ property.image.url }}" alt="Current main image" class="current-image">
-                                {% endif %}
-                                {{ form.image.label_tag }}
-                                <div class="image-upload-box" id="main-image-upload">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <p>Upload New Main Image</p>
+                    <!-- Step 3: Images -->
+                    <div class="form-section" id="step-2">
+                        <h2 class="text-2xl font-bold mb-6">Property Images</h2>
+                        <div class="space-y-6">
+                            <!-- Main Image -->
+                            <div class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-black transition cursor-pointer"
+                                onclick="document.getElementById('id_image').click()">
+                                <div id="preview-image"
+                                    class="h-48 w-full bg-gray-50 rounded-xl mb-4 bg-cover bg-center {% if not property.image %}hidden{% endif %}"
+                                    {% if property.image %}style="background-image: url('{{ property.image.url }}')" {%
+                                    endif %}></div>
+                                <div id="upload-placeholder-image" class="{% if property.image %}hidden{% endif %}">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-300 mb-3"></i>
+                                    <p class="font-medium text-gray-900">Click to replace Main Image</p>
+                                    <p class="text-sm text-gray-500">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                                 </div>
                                 {{ form.image }}
-                                <div class="image-preview" id="main-image-preview"></div>
                             </div>
 
-                            <div class="form-group">
-                                {% if property.image_2 %}
-                                    <img src="{{ property.image_2.url }}" alt="Current image 2" class="current-image">
-                                {% endif %}
-                                {{ form.image_2.label_tag }}
-                                <div class="image-upload-box" id="image-2-upload">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <p>Upload New Image 2</p>
+                            <div class="grid grid-cols-2 gap-6">
+                                <!-- Image 2 -->
+                                <div class="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center hover:border-black transition cursor-pointer"
+                                    onclick="document.getElementById('id_image_2').click()">
+                                    <div id="preview-image_2"
+                                        class="h-32 w-full bg-gray-50 rounded-xl mb-2 bg-cover bg-center {% if not property.image_2 %}hidden{% endif %}"
+                                        {% if property.image_2
+                                        %}style="background-image: url('{{ property.image_2.url }}')" {% endif %}></div>
+                                    <div id="upload-placeholder-image_2"
+                                        class="{% if property.image_2 %}hidden{% endif %}">
+                                        <i class="fas fa-image text-2xl text-gray-300 mb-2"></i>
+                                        <p class="text-sm font-medium">Additional Image 1</p>
+                                    </div>
+                                    {{ form.image_2 }}
                                 </div>
-                                {{ form.image_2 }}
-                                <div class="image-preview" id="image-2-preview"></div>
-                            </div>
-
-                            <div class="form-group">
-                                {% if property.image_3 %}
-                                    <img src="{{ property.image_3.url }}" alt="Current image 3" class="current-image">
-                                {% endif %}
-                                {{ form.image_3.label_tag }}
-                                <div class="image-upload-box" id="image-3-upload">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <p>Upload New Image 3</p>
+                                <!-- Image 3 -->
+                                <div class="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center hover:border-black transition cursor-pointer"
+                                    onclick="document.getElementById('id_image_3').click()">
+                                    <div id="preview-image_3"
+                                        class="h-32 w-full bg-gray-50 rounded-xl mb-2 bg-cover bg-center {% if not property.image_3 %}hidden{% endif %}"
+                                        {% if property.image_3
+                                        %}style="background-image: url('{{ property.image_3.url }}')" {% endif %}></div>
+                                    <div id="upload-placeholder-image_3"
+                                        class="{% if property.image_3 %}hidden{% endif %}">
+                                        <i class="fas fa-image text-2xl text-gray-300 mb-2"></i>
+                                        <p class="text-sm font-medium">Additional Image 2</p>
+                                    </div>
+                                    {{ form.image_3 }}
                                 </div>
-                                {{ form.image_3 }}
-                                <div class="image-preview" id="image-3-preview"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Additional Details Section -->
-                    <div class="form-section" id="additional">
-                        <h3><i class="fas fa-list"></i> Additional Details</h3>
-                        <div class="form-grid">
-                            <div class="features-grid">
-                                <div class="form-group">
-                                    {{ form.bedrooms.label_tag }}
-                                    {{ form.bedrooms }}
-                                </div>
-
-                                <div class="form-group">
-                                    {{ form.bathrooms.label_tag }}
-                                    {{ form.bathrooms }}
-                                </div>
-
-                                <div class="form-group">
-                                    {{ form.size.label_tag }}
-                                    {{ form.size }}
-                                </div>
-
-                                <div class="form-group">
-                                    {{ form.parking.label_tag }}
-                                    {{ form.parking }}
-                                </div>
-
-                                <div class="form-group">
-                                    {{ form.year_built.label_tag }}
-                                    {{ form.year_built }}
-                                </div>
-
-                                <div class="form-group">
-                                    {{ form.flooring_type.label_tag }}
-                                    {{ form.flooring_type }}
-                                </div>
+                    <!-- Step 4: Details -->
+                    <div class="form-section" id="step-3">
+                        <h2 class="text-2xl font-bold mb-6">Additional Details</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Bedrooms</label>
+                                {{ form.bedrooms }}
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Bathrooms</label>
+                                {{ form.bathrooms }}
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Size (sq ft)</label>
+                                {{ form.size }}
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Parking</label>
+                                {{ form.parking }}
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Year Built</label>
+                                {{ form.year_built }}
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Flooring</label>
+                                {{ form.flooring_type }}
                             </div>
 
-                            <div class="form-group">
-                                {{ form.owner_name.label_tag }}
-                                {{ form.owner_name }}
-                            </div>
-
-                            <div class="form-group">
-                                {{ form.email.label_tag }}
-                                {{ form.email }}
-                            </div>
-
-                            <div class="form-group">
-                                {{ form.phone.label_tag }}
-                                {{ form.phone }}
-                            </div>
-
-                            <div class="form-group">
-                                {{ form.occupancy_status.label_tag }}
-                                {{ form.occupancy_status }}
+                            <div class="col-span-full border-t border-gray-100 pt-6 mt-2">
+                                <h3 class="font-bold mb-4">Contact & Status</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Owner Name</label>
+                                        {{ form.owner_name }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                        {{ form.email }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                                        {{ form.phone }}
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Occupancy
+                                            Status</label>
+                                        {{ form.occupancy_status }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-navigation">
-                    <button type="button" class="prev-btn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
-                    <button type="button" class="next-btn">Next <i class="fas fa-arrow-right"></i></button>
-                    <button type="submit" class="submit-btn" style="display: none;">Update Property <i class="fas fa-check"></i></button>
-                </div>
-            </form>
+                    <!-- Navigation Buttons -->
+                    <div class="flex justify-between mt-8 pt-6 border-t border-gray-100">
+                        <button type="button" id="prevBtn"
+                            class="px-6 py-3 rounded-xl font-medium text-gray-600 hover:bg-gray-100 transition hidden"
+                            onclick="changeStep(-1)">
+                            Back
+                        </button>
+                        <div class="flex-grow"></div>
+                        <button type="button" id="nextBtn"
+                            class="px-8 py-3 rounded-full font-bold bg-black text-white hover:bg-gray-800 transition shadow-lg"
+                            onclick="changeStep(1)">
+                            Next Step <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                        <button type="submit" id="submitBtn"
+                            class="px-8 py-3 rounded-full font-bold bg-blue-600 text-white hover:bg-blue-700 transition shadow-lg hidden">
+                            Update Property <i class="fas fa-check ml-2"></i>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
         </div>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Map initialization
-            let map;
-            let marker;
-
-            // Form navigation elements
-            const sections = document.querySelectorAll('.form-section');
-            const steps = document.querySelectorAll('.step');
-            const prevBtn = document.querySelector('.prev-btn');
-            const nextBtn = document.querySelector('.next-btn');
-            const submitBtn = document.querySelector('.submit-btn');
-            let currentSection = 0;
-
-            // Initialize map
-            function initMap() {
-                map = L.map('map').setView([20.5937, 78.9629], 5);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(map);
-
-                marker = L.marker([20.5937, 78.9629], {
-                    draggable: true
-                }).addTo(map);
-
-                marker.on('dragend', function(event) {
-                    const position = marker.getLatLng();
-                    updateLocationDetails(position.lat, position.lng);
-                });
-
-                map.on('click', function(e) {
-                    updateMapLocation(e.latlng.lat, e.latlng.lng);
-                });
-            }
-
-            // Form navigation functions
-            function updateSections() {
-                sections.forEach((section, index) => {
-                    section.classList.remove('active');
-                    steps[index].classList.remove('active');
-                });
-
-                sections[currentSection].classList.add('active');
-                steps[currentSection].classList.add('active');
-
-                // Update buttons
-                prevBtn.disabled = currentSection === 0;
-                if (currentSection === sections.length - 1) {
-                    nextBtn.style.display = 'none';
-                    submitBtn.style.display = 'flex';
-                } else {
-                    nextBtn.style.display = 'flex';
-                    submitBtn.style.display = 'none';
-                }
-
-                // If we're on the location section, refresh the map
-                if (sections[currentSection].id === 'location' && map) {
-                    map.invalidateSize();
-                }
-            }
-
-            function validateSection(index) {
-                const section = sections[index];
-                const inputs = section.querySelectorAll('input, select, textarea');
-                let isValid = true;
-
-                inputs.forEach(input => {
-                    if (input.required && !input.value) {
-                        input.classList.add('error');
-                        isValid = false;
-                        const errorDiv = input.parentElement.querySelector('.error-message');
-                        if (errorDiv) {
-                            errorDiv.textContent = 'This field is required';
-                        }
-                    }
-                });
-
-                return isValid;
-            }
-
-            // Event listeners for navigation
-            nextBtn.addEventListener('click', () => {
-                if (validateSection(currentSection)) {
-                    currentSection++;
-                    updateSections();
-                    window.scrollTo(0, 0);
-                } else {
-                    alert('Please fill in all required fields before proceeding.');
+        // Apply Tailwind classes to Django form fields
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.type !== 'hidden' && input.type !== 'file' && input.type !== 'checkbox') {
+                    input.classList.add('w-full', 'px-4', 'py-3', 'rounded-xl', 'bg-gray-50', 'border-transparent', 'focus:bg-white', 'focus:border-black', 'focus:ring-0', 'transition');
                 }
             });
 
-            prevBtn.addEventListener('click', () => {
-                currentSection--;
-                updateSections();
-                window.scrollTo(0, 0);
+            // File inputs are hidden, so we don't style them directly
+            ['id_image', 'id_image_2', 'id_image_3'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) input.classList.add('hidden');
             });
-
-            // Click on steps to navigate
-            steps.forEach((step, index) => {
-                step.addEventListener('click', () => {
-                    if (index < currentSection || validateSection(currentSection)) {
-                        currentSection = index;
-                        updateSections();
-                        window.scrollTo(0, 0);
-                    }
-                });
-            });
-
-            // Map related functions
-            function useCurrentLocation() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            const lat = position.coords.latitude;
-                            const lng = position.coords.longitude;
-                            updateMapLocation(lat, lng);
-                        },
-                        (error) => {
-                            alert('Unable to fetch location. Please try again.');
-                        }
-                    );
-                } else {
-                    alert('Geolocation is not supported by your browser.');
-                }
-            }
-
-            function updateMapLocation(lat, lng) {
-                marker.setLatLng([lat, lng]);
-                map.setView([lat, lng], 16);
-                updateLocationDetails(lat, lng);
-            }
-
-            function updateLocationDetails(lat, lng) {
-                const osmUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`;
-                document.getElementById('id_location_url').value = osmUrl;
-                document.getElementById('location-preview-link').href = osmUrl;
-
-                fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.display_name) {
-                            document.getElementById('id_address').value = data.display_name;
-                            document.getElementById('id_location').value =
-                                data.address.city ||
-                                data.address.town ||
-                                data.address.village ||
-                                data.address.suburb ||
-                                '';
-                        }
-                    })
-                    .catch(error => console.error('Error fetching address:', error));
-            }
-
-            // Handle image uploads
-            function handleImageUpload(inputId, previewId, uploadBoxId) {
-                const input = document.getElementById(inputId);
-                const preview = document.getElementById(previewId);
-                const uploadBox = document.getElementById(uploadBoxId);
-
-                uploadBox.addEventListener('click', () => input.click());
-
-                input.addEventListener('change', function(e) {
-                    handleFiles(this.files);
-                });
-
-                uploadBox.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    uploadBox.classList.add('dragover');
-                });
-
-                uploadBox.addEventListener('dragleave', () => {
-                    uploadBox.classList.remove('dragover');
-                });
-
-                uploadBox.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    uploadBox.classList.remove('dragover');
-                    handleFiles(e.dataTransfer.files);
-                });
-
-                function handleFiles(files) {
-                    if (files.length > 0) {
-                        const file = files[0];
-                        if (file.type.startsWith('image/')) {
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                preview.style.backgroundImage = `url(${e.target.result})`;
-                                preview.style.display = 'block';
-                                uploadBox.style.display = 'none';
-                            }
-                            reader.readAsDataURL(file);
-                        } else {
-                            alert('Please upload an image file.');
-                        }
-                    }
-                }
-            }
-
-            // Initialize everything
-            initMap();
-            handleImageUpload('id_image', 'main-image-preview', 'main-image-upload');
-            handleImageUpload('id_image_2', 'image-2-preview', 'image-2-upload');
-            handleImageUpload('id_image_3', 'image-3-preview', 'image-3-upload');
-
-            // Make map-related functions globally available
-            window.useCurrentLocation = useCurrentLocation;
         });
+
+        // Multi-step Logic
+        let currentStep = 0;
+        const steps = document.querySelectorAll('.step');
+        const sections = document.querySelectorAll('.form-section');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function showStep(n) {
+            sections.forEach((s, i) => {
+                s.classList.remove('active');
+                if (i === n) s.classList.add('active');
+            });
+
+            steps.forEach((s, i) => {
+                s.classList.remove('active');
+                if (i === n) s.classList.add('active');
+            });
+
+            prevBtn.classList.toggle('hidden', n === 0);
+
+            if (n === sections.length - 1) {
+                nextBtn.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+                submitBtn.classList.add('hidden');
+            }
+
+            // Refresh map if on location step
+            if (n === 1 && map) {
+                setTimeout(() => map.invalidateSize(), 100);
+            }
+        }
+
+        function changeStep(n) {
+            if (n === 1 && !validateCurrentStep()) return;
+            currentStep += n;
+            showStep(currentStep);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToStep(n) {
+            if (n > currentStep && !validateCurrentStep()) return;
+            currentStep = n;
+            showStep(currentStep);
+        }
+
+        function validateCurrentStep() {
+            const currentSection = sections[currentStep];
+            const inputs = currentSection.querySelectorAll('input[required], select[required], textarea[required]');
+            let valid = true;
+            inputs.forEach(input => {
+                if (!input.value) {
+                    input.classList.add('border-red-500', 'bg-red-50');
+                    valid = false;
+                } else {
+                    input.classList.remove('border-red-500', 'bg-red-50');
+                }
+            });
+            if (!valid) alert('Please fill in all required fields.');
+            return valid;
+        }
+
+        // Map Logic
+        let map, marker;
+        function initMap() {
+            // Default to India center if no location provided
+            let initialLat = 20.5937;
+            let initialLng = 78.9629;
+            let initialZoom = 5;
+
+            // Try to parse existing location URL if available
+            const locationUrl = document.getElementById('id_location_url').value;
+            if (locationUrl) {
+                const match = locationUrl.match(/mlat=([\d.-]+)&mlon=([\d.-]+)/);
+                if (match) {
+                    initialLat = parseFloat(match[1]);
+                    initialLng = parseFloat(match[2]);
+                    initialZoom = 16;
+                }
+            }
+
+            map = L.map('map').setView([initialLat, initialLng], initialZoom);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
+
+            marker.on('dragend', function (e) {
+                const pos = marker.getLatLng();
+                updateLocation(pos.lat, pos.lng);
+            });
+
+            map.on('click', function (e) {
+                marker.setLatLng(e.latlng);
+                updateLocation(e.latlng.lat, e.latlng.lng);
+            });
+
+            // Set initial preview link
+            if (locationUrl) {
+                document.getElementById('location-preview-link').href = locationUrl;
+            }
+        }
+
+        function updateLocation(lat, lng) {
+            const url = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`;
+            document.getElementById('id_location_url').value = url;
+            document.getElementById('location-preview-link').href = url;
+
+            // Reverse Geocoding (Optional enhancement)
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.address) {
+                        if (document.getElementById('id_address')) document.getElementById('id_address').value = data.display_name;
+                        if (document.getElementById('id_pincode')) document.getElementById('id_pincode').value = data.address.postcode || '';
+                        if (document.getElementById('id_state')) document.getElementById('id_state').value = data.address.state || '';
+                        if (document.getElementById('id_location')) document.getElementById('id_location').value = data.address.city || data.address.town || '';
+                    }
+                });
+        }
+
+        function useCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    const { latitude, longitude } = pos.coords;
+                    map.setView([latitude, longitude], 16);
+                    marker.setLatLng([latitude, longitude]);
+                    updateLocation(latitude, longitude);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Image Previews
+        function setupImagePreview(inputId, previewId, placeholderId) {
+            document.getElementById(inputId).addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const preview = document.getElementById(previewId);
+                        const placeholder = document.getElementById(placeholderId);
+                        preview.style.backgroundImage = `url(${e.target.result})`;
+                        preview.classList.remove('hidden');
+                        placeholder.classList.add('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        setupImagePreview('id_image', 'preview-image', 'upload-placeholder-image');
+        setupImagePreview('id_image_2', 'preview-image_2', 'upload-placeholder-image_2');
+        setupImagePreview('id_image_3', 'preview-image_3', 'upload-placeholder-image_3');
+
+        // Init
+        initMap();
     </script>
-    {% endblock %}
 </body>
+
 </html>
