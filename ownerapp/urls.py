@@ -17,7 +17,7 @@ path('ownerhomepage/',views.ownerhompage,name='ownerhomepage'),
     path('properties/delete/<int:pk>/', views.delete_property, name='delete_property'),
 
     path('owner_profile/', views.owner_profile, name='owner_profile'),
-    path('about_us/',views.about_us,name='about_us'),
+
     path('rental_contract/',views.rental_contract,name='rental_contract'),
 
 

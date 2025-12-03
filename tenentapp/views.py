@@ -9,8 +9,7 @@ from ownerapp.models import OwnerUser ,Property
 def tenenthompage(request):
     return render(request,'tenentApp/tenentHomePage.html')
 
-def about_us(request):
-    return render(request,'tenentApp/about_us.html')
+
 
 
 # tenentapp/views.py

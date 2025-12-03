@@ -1,8 +1,7 @@
 {% load static %}
 
 <!-- OWNER NAVBAR -->
-<nav
-    class="w-full max-w-5xl mt-6 bg-black/90 backdrop-blur-md border border-white/20 rounded-full px-6 py-3 
+<nav class="w-full max-w-5xl mt-6 bg-black/90 backdrop-blur-md border border-white/20 rounded-full px-6 py-3 
            flex justify-between items-center text-white z-20 mx-auto absolute left-0 right-0 top-0">
 
     <!-- Logo -->
@@ -19,7 +18,7 @@
         <a href="{% url 'ownerapp:owner_messages' %}" class="hover:text-white transition">Messages</a>
         <a href="{% url 'ownerapp:owner_profile' %}" class="hover:text-white transition">Profile</a>
         <a href="{% url 'ownerapp:chatbot' %}" class="hover:text-white transition">ChatBot</a>
-        <a href="{% url 'ownerapp:about_us' %}" class="hover:text-white transition">About</a>
+
     </div>
 
     <!-- Desktop Auth -->
@@ -71,20 +70,25 @@
 
 
 <!-- MOBILE MENU (OWNER VERSION) -->
-<div id="mobileMenu"
-    class="md:hidden hidden fixed top-20 left-0 right-0 mx-auto w-[90%]
+<div id="mobileMenu" class="md:hidden hidden fixed top-20 left-0 right-0 mx-auto w-[90%]
            backdrop-blur-xl bg-black/70 border border-white/10 rounded-2xl shadow-2xl 
            p-6 space-y-5 z-50 animate-slideDown">
 
     <div class="space-y-4">
-        <a href="{% url 'ownerapp:ownerhomepage' %}" class="block text-lg font-semibold text-white hover:text-gray-300">Home</a>
-        <a href="{% url 'ownerapp:property_list' %}" class="block text-lg font-semibold text-white hover:text-gray-300">My Properties</a>
-        <a href="{% url 'ownerapp:upload_property' %}" class="block text-lg font-semibold text-white hover:text-gray-300">Upload</a>
-        <a href="{% url 'ownerapp:rental_contract' %}" class="block text-lg font-semibold text-white hover:text-gray-300">Contracts</a>
-        <a href="{% url 'ownerapp:owner_messages' %}" class="block text-lg font-semibold text-white hover:text-gray-300">Messages</a>
-        <a href="{% url 'ownerapp:owner_profile' %}" class="block text-lg font-semibold text-white hover:text-gray-300">Profile</a>
-        <a href="{% url 'ownerapp:chatbot' %}" class="block text-lg font-semibold text-white hover:text-gray-300">ChatBot</a>
-        <a href="{% url 'ownerapp:about_us' %}" class="block text-lg font-semibold text-white hover:text-gray-300">About</a>
+        <a href="{% url 'ownerapp:ownerhomepage' %}"
+            class="block text-lg font-semibold text-white hover:text-gray-300">Home</a>
+        <a href="{% url 'ownerapp:property_list' %}"
+            class="block text-lg font-semibold text-white hover:text-gray-300">My Properties</a>
+        <a href="{% url 'ownerapp:upload_property' %}"
+            class="block text-lg font-semibold text-white hover:text-gray-300">Upload</a>
+        <a href="{% url 'ownerapp:rental_contract' %}"
+            class="block text-lg font-semibold text-white hover:text-gray-300">Contracts</a>
+        <a href="{% url 'ownerapp:owner_messages' %}"
+            class="block text-lg font-semibold text-white hover:text-gray-300">Messages</a>
+        <a href="{% url 'ownerapp:owner_profile' %}"
+            class="block text-lg font-semibold text-white hover:text-gray-300">Profile</a>
+        <a href="{% url 'ownerapp:chatbot' %}"
+            class="block text-lg font-semibold text-white hover:text-gray-300">ChatBot</a>
     </div>
 
     <hr class="border-white/20">
@@ -128,11 +132,19 @@
 
 <!-- ANIMATION -->
 <style>
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.animate-slideDown {
-    animation: slideDown 0.25s ease-out;
-}
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-slideDown {
+        animation: slideDown 0.25s ease-out;
+    }
 </style>

@@ -29,7 +29,7 @@
     </script>
     <style>
         .glass-card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 2rem;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -40,35 +40,104 @@
             min-height: 600px;
         }
 
-        .form-container {
-            position: absolute;
-            top: 0;
-            height: 100%;
-            transition: all 0.6s ease-in-out;
-        }
+        /* Desktop Sliding Animation Styles */
+        @media (min-width: 768px) {
+            .form-container {
+                position: absolute;
+                top: 0;
+                height: 100%;
+                transition: all 0.6s ease-in-out;
+            }
 
-        .sign-in-container {
-            left: 0;
-            width: 50%;
-            z-index: 2;
-        }
+            .sign-in-container {
+                left: 0;
+                width: 50%;
+                z-index: 2;
+            }
 
-        .sign-up-container {
-            left: 0;
-            width: 50%;
-            opacity: 0;
-            z-index: 1;
-        }
+            .sign-up-container {
+                left: 0;
+                width: 50%;
+                opacity: 0;
+                z-index: 1;
+            }
 
-        .container.right-panel-active .sign-in-container {
-            transform: translateX(100%);
-        }
+            .container.right-panel-active .sign-in-container {
+                transform: translateX(100%);
+            }
 
-        .container.right-panel-active .sign-up-container {
-            transform: translateX(100%);
-            opacity: 1;
-            z-index: 5;
-            animation: show 0.6s;
+            .container.right-panel-active .sign-up-container {
+                transform: translateX(100%);
+                opacity: 1;
+                z-index: 5;
+                animation: show 0.6s;
+            }
+
+            .overlay-container {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                width: 50%;
+                height: 100%;
+                overflow: hidden;
+                transition: transform 0.6s ease-in-out;
+                z-index: 100;
+            }
+
+            .container.right-panel-active .overlay-container {
+                transform: translateX(-100%);
+            }
+
+            .overlay {
+                background: #000;
+                background: linear-gradient(to right, #0f172a, #334155);
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: 0 0;
+                color: #FFFFFF;
+                position: relative;
+                left: -100%;
+                height: 100%;
+                width: 200%;
+                transform: translateX(0);
+                transition: transform 0.6s ease-in-out;
+            }
+
+            .container.right-panel-active .overlay {
+                transform: translateX(50%);
+            }
+
+            .overlay-panel {
+                position: absolute;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                padding: 0 40px;
+                text-align: center;
+                top: 0;
+                height: 100%;
+                width: 50%;
+                transform: translateX(0);
+                transition: transform 0.6s ease-in-out;
+            }
+
+            .overlay-left {
+                transform: translateX(-20%);
+            }
+
+            .container.right-panel-active .overlay-left {
+                transform: translateX(0);
+            }
+
+            .overlay-right {
+                right: 0;
+                transform: translateX(0);
+            }
+
+            .container.right-panel-active .overlay-right {
+                transform: translateX(20%);
+            }
         }
 
         @keyframes show {
@@ -86,95 +155,100 @@
             }
         }
 
-        .overlay-container {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 50%;
-            height: 100%;
-            overflow: hidden;
-            transition: transform 0.6s ease-in-out;
-            z-index: 100;
+        /* Mobile Styles */
+        @media (max-width: 767px) {
+            .glass-card {
+                min-height: auto;
+                width: 90%;
+                max-width: 400px;
+                padding: 1.5rem;
+                background: rgba(255, 255, 255, 0.9);
+            }
+
+            .form-container {
+                position: relative;
+                width: 100%;
+                height: auto;
+                transition: opacity 0.3s ease;
+                background: transparent !important;
+                /* Allow glass card bg to show */
+                padding: 0 !important;
+            }
+
+            /* Strict visibility control for mobile */
+            .sign-up-container {
+                display: none !important;
+            }
+
+            .sign-in-container {
+                display: flex !important;
+            }
+
+            /* Classes to toggle visibility via JS */
+            .sign-up-container.mobile-active {
+                display: flex !important;
+                animation: fadeIn 0.5s;
+            }
+
+            .sign-in-container.mobile-hidden {
+                display: none !important;
+            }
+
+            .sign-in-container.mobile-active {
+                display: flex !important;
+                animation: fadeIn 0.5s;
+            }
+
+            .overlay-container {
+                display: none;
+                /* Hide overlay on mobile */
+            }
+
+            .mobile-toggle {
+                display: block;
+                margin-top: 1.5rem;
+                text-align: center;
+                font-size: 0.875rem;
+                color: #4b5563;
+            }
+
+            .mobile-toggle a {
+                color: #0f172a;
+                font-weight: 700;
+                cursor: pointer;
+                text-decoration: underline;
+            }
         }
 
-        .container.right-panel-active .overlay-container {
-            transform: translateX(-100%);
-        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
 
-        .overlay {
-            background: #000;
-            background: linear-gradient(to right, #0f172a, #334155);
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: 0 0;
-            color: #FFFFFF;
-            position: relative;
-            left: -100%;
-            height: 100%;
-            width: 200%;
-            transform: translateX(0);
-            transition: transform 0.6s ease-in-out;
-        }
-
-        .container.right-panel-active .overlay {
-            transform: translateX(50%);
-        }
-
-        .overlay-panel {
-            position: absolute;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 0 40px;
-            text-align: center;
-            top: 0;
-            height: 100%;
-            width: 50%;
-            transform: translateX(0);
-            transition: transform 0.6s ease-in-out;
-        }
-
-        .overlay-left {
-            transform: translateX(-20%);
-        }
-
-        .container.right-panel-active .overlay-left {
-            transform: translateX(0);
-        }
-
-        .overlay-right {
-            right: 0;
-            transform: translateX(0);
-        }
-
-        .container.right-panel-active .overlay-right {
-            transform: translateX(20%);
-        }
-
-        input {
-            background-color: #f3f4f6;
-            border: none;
-            padding: 12px 15px;
-            margin: 8px 0;
-            width: 100%;
-            border-radius: 0.5rem;
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 
-<body class="font-sans bg-gray-100 flex justify-center items-center h-screen"
+<body class="font-sans bg-gray-900 flex justify-center items-center h-screen p-4"
     style="background-image: url('{% static 'images/loginbg.jpg' %}'); background-size: cover; background-position: center;">
 
-    <div class="glass-card container" id="container">
+    <!-- Dark overlay for better contrast -->
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+
+    <div class="glass-card container z-10" id="container">
 
         <!-- Sign Up Form -->
         <div
-            class="form-container sign-up-container bg-white flex flex-col items-center justify-center p-12 text-center">
-            <form method="POST" action="{% url 'ownerapp:login_or_register1' %}" class="w-full max-w-xs">
+            class="form-container sign-up-container bg-white flex flex-col items-center justify-center p-8 md:p-12 text-center h-full">
+            <form method="POST" action="{% url 'ownerapp:login_or_register1' %}" class="w-full max-w-xs mx-auto">
                 {% csrf_token %}
                 <h1 class="text-3xl font-bold mb-4 text-gray-900">Create Account</h1>
-                <p class="text-sm text-gray-500 mb-6">Use your email for registration</p>
+                <p class="text-sm text-gray-500 mb-6">Register as a Property Owner</p>
 
                 {% if messages %}
                 <div class="mb-4">
@@ -184,24 +258,34 @@
                 </div>
                 {% endif %}
 
-                <input type="text" name="username" placeholder="Name" required />
-                <input type="email" name="email" placeholder="Email" required />
-                <input type="password" name="password" placeholder="Password" required />
+                <div class="space-y-3 w-full">
+                    <input type="text" name="username" placeholder="Name" required
+                        class="w-full bg-gray-50 px-4 py-3 rounded-xl border-none focus:ring-2 focus:ring-black transition outline-none" />
+                    <input type="email" name="email" placeholder="Email" required
+                        class="w-full bg-gray-50 px-4 py-3 rounded-xl border-none focus:ring-2 focus:ring-black transition outline-none" />
+                    <input type="password" name="password" placeholder="Password" required
+                        class="w-full bg-gray-50 px-4 py-3 rounded-xl border-none focus:ring-2 focus:ring-black transition outline-none" />
+                </div>
 
                 <button type="submit" name="register"
-                    class="mt-6 bg-black text-white px-8 py-3 rounded-full font-bold uppercase text-xs tracking-wider hover:bg-gray-800 transition shadow-lg">
+                    class="mt-6 w-full bg-black text-white px-8 py-3 rounded-full font-bold uppercase text-xs tracking-wider hover:bg-gray-800 transition shadow-lg transform hover:scale-105">
                     Sign Up
                 </button>
+
+                <!-- Mobile Toggle Link -->
+                <div class="mobile-toggle md:hidden">
+                    Already have an account? <a id="mobile-to-signin">Sign In</a>
+                </div>
             </form>
         </div>
 
         <!-- Sign In Form -->
         <div
-            class="form-container sign-in-container bg-white flex flex-col items-center justify-center p-12 text-center">
-            <form method="POST" action="{% url 'ownerapp:login_or_register1' %}" class="w-full max-w-xs">
+            class="form-container sign-in-container bg-white flex flex-col items-center justify-center p-8 md:p-12 text-center h-full">
+            <form method="POST" action="{% url 'ownerapp:login_or_register1' %}" class="w-full max-w-xs mx-auto">
                 {% csrf_token %}
                 <h1 class="text-3xl font-bold mb-4 text-gray-900">Owner Sign in</h1>
-                <p class="text-sm text-gray-500 mb-6">Welcome back to PS6</p>
+                <p class="text-sm text-gray-500 mb-6">Welcome back to PS6 Owner Portal</p>
 
                 {% if messages %}
                 <div class="mb-4">
@@ -211,34 +295,45 @@
                 </div>
                 {% endif %}
 
-                <input type="text" name="username" placeholder="Username" required />
-                <input type="password" name="password" placeholder="Password" required />
-                <a href="#" class="text-xs text-gray-400 mt-4 hover:text-black transition">Forgot your password?</a>
+                <div class="space-y-3 w-full">
+                    <input type="text" name="username" placeholder="Username" required
+                        class="w-full bg-gray-50 px-4 py-3 rounded-xl border-none focus:ring-2 focus:ring-black transition outline-none" />
+                    <input type="password" name="password" placeholder="Password" required
+                        class="w-full bg-gray-50 px-4 py-3 rounded-xl border-none focus:ring-2 focus:ring-black transition outline-none" />
+                </div>
+
+                <a href="#" class="text-xs text-gray-400 mt-4 hover:text-black transition block">Forgot your
+                    password?</a>
 
                 <button type="submit" name="login"
-                    class="mt-6 bg-black text-white px-8 py-3 rounded-full font-bold uppercase text-xs tracking-wider hover:bg-gray-800 transition shadow-lg">
+                    class="mt-6 w-full bg-black text-white px-8 py-3 rounded-full font-bold uppercase text-xs tracking-wider hover:bg-gray-800 transition shadow-lg transform hover:scale-105">
                     Sign In
                 </button>
+
+                <!-- Mobile Toggle Link -->
+                <div class="mobile-toggle md:hidden">
+                    Don't have an account? <a id="mobile-to-signup">Sign Up</a>
+                </div>
             </form>
         </div>
 
-        <!-- Overlay -->
-        <div class="overlay-container">
+        <!-- Overlay (Desktop Only) -->
+        <div class="overlay-container hidden md:block">
             <div class="overlay">
                 <div class="overlay-panel overlay-left">
                     <h1 class="text-3xl font-bold mb-4">Welcome Back!</h1>
                     <p class="text-gray-200 mb-8">To keep connected with us please login with your personal info</p>
                     <button
-                        class="bg-transparent border border-white text-white px-8 py-3 rounded-full font-bold uppercase text-xs tracking-wider hover:bg-white hover:text-black transition"
+                        class="bg-transparent border border-white text-white px-8 py-3 rounded-full font-bold uppercase text-xs tracking-wider hover:bg-white hover:text-black transition transform hover:scale-105"
                         id="signIn">
                         Sign In
                     </button>
                 </div>
                 <div class="overlay-panel overlay-right">
                     <h1 class="text-3xl font-bold mb-4">Hello, Owner!</h1>
-                    <p class="text-gray-200 mb-8">Enter your personal details and start listing properties</p>
+                    <p class="text-gray-200 mb-8">Enter your personal details and start managing your properties</p>
                     <button
-                        class="bg-transparent border border-white text-white px-8 py-3 rounded-full font-bold uppercase text-xs tracking-wider hover:bg-white hover:text-black transition"
+                        class="bg-transparent border border-white text-white px-8 py-3 rounded-full font-bold uppercase text-xs tracking-wider hover:bg-white hover:text-black transition transform hover:scale-105"
                         id="signUp">
                         Sign Up
                     </button>
@@ -252,13 +347,43 @@
         const signInButton = document.getElementById('signIn');
         const container = document.getElementById('container');
 
-        signUpButton.addEventListener('click', () => {
-            container.classList.add("right-panel-active");
-        });
+        // Mobile Toggle Elements
+        const mobileToSignUp = document.getElementById('mobile-to-signup');
+        const mobileToSignIn = document.getElementById('mobile-to-signin');
+        const signUpContainer = document.querySelector('.sign-up-container');
+        const signInContainer = document.querySelector('.sign-in-container');
 
-        signInButton.addEventListener('click', () => {
-            container.classList.remove("right-panel-active");
-        });
+        // Desktop Sliding Logic
+        if (signUpButton && signInButton) {
+            signUpButton.addEventListener('click', () => {
+                container.classList.add("right-panel-active");
+            });
+
+            signInButton.addEventListener('click', () => {
+                container.classList.remove("right-panel-active");
+            });
+        }
+
+        // Mobile Toggle Logic
+        if (mobileToSignUp && mobileToSignIn) {
+            mobileToSignUp.addEventListener('click', () => {
+                // Switch to Sign Up
+                signInContainer.classList.add('mobile-hidden');
+                signInContainer.classList.remove('mobile-active');
+
+                signUpContainer.classList.add('mobile-active');
+                signUpContainer.classList.remove('mobile-hidden'); // Ensure it's not hidden
+            });
+
+            mobileToSignIn.addEventListener('click', () => {
+                // Switch to Sign In
+                signUpContainer.classList.remove('mobile-active');
+                // signUpContainer.classList.add('mobile-hidden'); // Not strictly needed if default is hidden, but good for safety
+
+                signInContainer.classList.remove('mobile-hidden');
+                signInContainer.classList.add('mobile-active');
+            });
+        }
     </script>
 </body>
 

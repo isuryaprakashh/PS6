@@ -260,8 +260,7 @@ def owner_profile(request):
         'page_title': 'Profile Settings'
     }
     return render(request, 'ownerApp/ownerProfile.html', context)
-def about_us(request):
-    return render(request,'ownerApp/about_us.html')
+
 
 from django.shortcuts import render
 from django.http import HttpResponse
