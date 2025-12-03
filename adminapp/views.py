@@ -283,4 +283,4 @@ def delete_property(request, pk):
         property.delete()
         return redirect('ownerapp:property_list')
 
-    return render(request, 'confirm_delete.html', {'property': property})
+    return render(request, 'ownerApp/confirm_delete.html', {'property': property})

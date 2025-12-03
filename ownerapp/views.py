@@ -191,14 +191,14 @@ def edit_property(request, pk):
 def delete_property(request, pk):
     property = get_object_or_404(Property, id=pk)
 
-    if property.owner != request.user:  # Ensure only the owner can delete
+    if property.owner != request.user and request.user.username != 'admin':  # Ensure only the owner or admin can delete
         return HttpResponseForbidden("You are not allowed to delete this property.")
 
     if request.method == "POST":
         property.delete()
         return redirect('ownerapp:property_list')
 
-    return render(request, 'confirm_delete.html', {'property': property})
+    return render(request, 'ownerApp/confirm_delete.html', {'property': property})
 
 
 # views.py
