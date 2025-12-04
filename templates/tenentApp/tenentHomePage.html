@@ -88,21 +88,6 @@
     {% include 'components/toast.html' %}
 
     {% if not user.is_authenticated %}
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Select all links that should be restricted
-            document.querySelectorAll("nav a, .auth-buttons a, .btn-content").forEach(link => {
-                link.addEventListener("click", function (event) {
-                    // Check if the link is not a login/register link
-                    const href = link.getAttribute('href');
-                    if (href && !href.includes('login') && !href.includes('register') && href !== '#') {
-                        event.preventDefault();
-                        showToast("Please log in first to access this feature.", "error");
-                    }
-                });
-            });
-        });
-    </script>
     {% endif %}
 
     <!-- HERO SECTION -->

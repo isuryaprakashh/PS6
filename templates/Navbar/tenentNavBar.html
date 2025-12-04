@@ -12,9 +12,13 @@
     <!-- Desktop Menu -->
     <div class="hidden md:flex space-x-6 text-sm font-medium text-gray-200">
         <a href="{% url 'tenentapp:tenenthomepage' %}" class="hover:text-white transition">Home</a>
-        <a href="{% url 'tenentapp:property_list' %}" class="hover:text-white transition">Find Properties</a>
-        <a href="{% url 'tenentapp:tenant_messages' %}" class="hover:text-white transition">Messages</a>
-        <a href="{% url 'tenentapp:tenent_profile' %}" class="hover:text-white transition">Profile</a>
+        <a href="{% url 'tenentapp:property_list' %}"
+            class="hover:text-white transition {% if not user.is_authenticated %}restricted-link{% endif %}">Find
+            Properties</a>
+        <a href="{% url 'tenentapp:tenant_messages' %}"
+            class="hover:text-white transition {% if not user.is_authenticated %}restricted-link{% endif %}">Messages</a>
+        <a href="{% url 'tenentapp:tenent_profile' %}"
+            class="hover:text-white transition {% if not user.is_authenticated %}restricted-link{% endif %}">Profile</a>
         <a href="{% url 'tenentapp:chatbot_view' %}" class="hover:text-white transition">ChatBot</a>
 
     </div>
@@ -76,13 +80,14 @@
             class="block text-lg font-semibold text-white hover:text-gray-300">Home</a>
 
         <a href="{% url 'tenentapp:property_list' %}"
-            class="block text-lg font-semibold text-white hover:text-gray-300">Find Properties</a>
+            class="block text-lg font-semibold text-white hover:text-gray-300 {% if not user.is_authenticated %}restricted-link{% endif %}">Find
+            Properties</a>
 
         <a href="{% url 'tenentapp:tenant_messages' %}"
-            class="block text-lg font-semibold text-white hover:text-gray-300">Messages</a>
+            class="block text-lg font-semibold text-white hover:text-gray-300 {% if not user.is_authenticated %}restricted-link{% endif %}">Messages</a>
 
         <a href="{% url 'tenentapp:tenent_profile' %}"
-            class="block text-lg font-semibold text-white hover:text-gray-300">Profile</a>
+            class="block text-lg font-semibold text-white hover:text-gray-300 {% if not user.is_authenticated %}restricted-link{% endif %}">Profile</a>
 
         <a href="{% url 'tenentapp:chatbot_view' %}"
             class="block text-lg font-semibold text-white hover:text-gray-300">ChatBot</a>
@@ -128,6 +133,21 @@
     document.getElementById("mobileMenuBtn").addEventListener("click", function () {
         const menu = document.getElementById("mobileMenu");
         menu.classList.toggle("hidden");
+    });
+
+    // Handle restricted links
+    document.addEventListener("DOMContentLoaded", function () {
+        const restrictedLinks = document.querySelectorAll('.restricted-link');
+        restrictedLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (typeof showToast === 'function') {
+                    showToast("Please log in first to access this feature.", "error");
+                } else {
+                    alert("Please log in first to access this feature.");
+                }
+            });
+        });
     });
 </script>
 
